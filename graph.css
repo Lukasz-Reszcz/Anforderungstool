@@ -1,0 +1,17 @@
+.draggable-el {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    background-color: forestgreen;
+    padding: 20px 50px;
+    cursor: grab;
+    border-radius: 20px;
+}
+
+.dropdown-content {
+  display: none;
+}
+
+.show {
+    display: block;
+}
