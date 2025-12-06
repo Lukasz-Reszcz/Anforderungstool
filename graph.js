@@ -1,4 +1,6 @@
+// globale Variablen
 nodeMaxID = 0;
+verbindenAktiv = false;
 class Node {
 	constructor(info){
         // ID
@@ -13,7 +15,8 @@ class Node {
         this.info = info;  
         this.anforderungsquelle = null;
 
-        // Make draggable
+        // DeKnoten
+        this.make_knoten();
         this.make_draggable();
 
         this.isDragging = false;
@@ -21,6 +24,7 @@ class Node {
 
         // Menu
         this.addMenu();
+        this.aktiveMenuOption = null;
     }
     
     append(direction, info){
@@ -69,7 +73,7 @@ class Node {
         this.anforderungsquelle = aquelle;
     }
 
-    make_draggable(){
+    make_knoten(){
         // Den Knoten auf einer Stelle setzen (oben links)
         this.el = document.createElement("div");
         this.el.className = "draggable-el";
@@ -77,16 +81,25 @@ class Node {
 
         const graphContainer = document.getElementById("nodec");
         
-
         this.el.style.position = "absolute";
         this.el.style.left = "50px";
         this.el.style.top = "50px"; 
 
+        // Änderbares Textfeld
         this.par = document.createElement("p");
         this.par.contentEditable = true;
         this.par.textContent = this.info;
-
         this.el.appendChild(this.par);
+
+        // ID
+        const parID = document.createElement("p");
+        parID.textContent = "ID: " + this.el.id;
+        this.el.appendChild(parID);
+
+        // Verbunden mit
+        const parVerbindung = document.createElement("p");
+        parVerbindung.textContent = "Verbunden mit: ";
+        this.el.appendChild(parVerbindung);
 
         this.menuContainer = document.createElement("div");
         this.menuContainer.id = "menu";
@@ -94,31 +107,19 @@ class Node {
 
         // make a menu options
         this.menuOption = document.createElement("a");
-        this.menuOption.href = "#verbinden";
+        this.menuOption.className = "menuOption";
         this.menuOption.textContent = "verbinden";
 
         this.menuContainer.appendChild(this.menuOption);
         this.el.appendChild(this.menuContainer);
 
         graphContainer.appendChild(this.el);
+    }
 
-        // this.el.addEventListener('contextmenu', (event) => {
-        //     event.preventDefault();
-        //     document.getElementById("menu").classList.toggle("show");
-        //     // this.
-        //     // document.getElementById("menu").classList.toggle("show");
-        // })
-        
-        
-        
-
+    make_draggable(){
         this.el.addEventListener('mousedown', (event) => {
             this.activeElement = event.currentTarget;
-
             this.activeElement.style.zIndex = 100;
-
-
-
             this.isDragging = true;
             lastX = event.target.clientX;
             lastY = event.target.clientY;
@@ -152,15 +153,43 @@ class Node {
         })
     }
 
+    // Funktionalitäten zum Munü
     addMenu(){
         this.el.addEventListener('contextmenu', (event) => {
             event.preventDefault();
             // event.currentTarget.classList.toggle("show");
             // document.getElementById("menu").classList.toggle("show");
 
-            //this.el.querySelector("#menu").classList.toggle("show");
+            // # - ID
+            // .p - className
             this.el.querySelector("#menu").classList.toggle("show");            
         })
+
+        const menuOptions = this.el.querySelectorAll(".menuOption");
+        for(const mOpt of menuOptions){
+            mOpt.addEventListener('mousedown', (event) => {
+                if(mOpt.textContent == "verbinden"){
+                    if(verbindenAktiv){
+                        document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + 
+                            // verbinden->Menü->Knoten
+                            event.target.parentElement.parentElement.id;
+                        this.aktiveMenuOption = null; // Noch nützlich?
+                        verbindenAktiv = false;
+                    }
+                    else {
+                        // const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
+                        const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
+                        document.getElementById("ausgabetest").textContent = msg;
+
+                        // global machen?
+                        this.aktiveMenuOption = "verbinden"; // Noch nützlich?
+                        verbindenAktiv = true;
+                    }
+
+                }
+            })
+        }
+        
     }
 }
 
