@@ -1,5 +1,6 @@
 // globale Variablen
 nodeMaxID = 0;
+graphMaxID = 0;
 verbindenAktiv = false;
 class Node {
 	constructor(info){
@@ -97,9 +98,10 @@ class Node {
         this.el.appendChild(parID);
 
         // Verbunden mit
-        const parVerbindung = document.createElement("p");
-        parVerbindung.textContent = "Verbunden mit: ";
-        this.el.appendChild(parVerbindung);
+        this.parVerbindung = document.createElement("p");
+        this.parVerbindung.id = "verbindung";
+        this.parVerbindung.textContent = "Verbindungen\n";
+        this.el.appendChild(this.parVerbindung);
 
         this.menuContainer = document.createElement("div");
         this.menuContainer.id = "menu";
@@ -193,15 +195,181 @@ class Node {
     }
 }
 
-function newNode(){
-    const knoten = new Node("Test");
-    // knoten.make_draggable();
+class Vertex {
+    constructor(){
+        this.nodes = [];
+        this.kanten = new Array();
+        this.size = 0;
+    }
 
+    addNode(node){
+        // this.nodes.push(node.id);
+        this.nodes.push(node);
+        this.size++;
+        this.kanten.push([0]);
+
+        // console.log(this.kanten);
+
+        for(let i=1; i<this.size-1; i++){
+            this.kanten[this.size-1].push(0);
+        }
+
+        for(let i=0; i<this.size-1; i++){
+            this.kanten[i][this.size-1] = 0;
+            this.kanten[this.size-1][i] = 0;
+        }
+    }
+
+    // Soll diese Funktion in die Klasse Graph rein und "Vertex"
+    // als eine Datenstruktur betrachtet weden?
+    addConnection(nodex, nodey, con){
+        if(nodex > this.size - 1 || nodey > this.size - 1){
+            console.log("Der Knoten existiert nicht");
+            return;
+        }
+        this.kanten[nodex][nodey] = con;
+    }
+
+    print(){
+        console.log(this.kanten);
+        /*
+        for(let i=0; i<this.size; i++){
+            for(let j=0; j<this.size; j++){
+                if (i !== j){
+                    continue;
+                }
+                System.out.log(this.kanten[i][j]);
+            }
+        }
+        */
+    }
+}
+
+class Graph {
+    constructor(){
+        graphMaxID += 1;
+        this.id = graphMaxID;
+        this.knoten = new Array();
+        this.kanten = new Vertex();
+    }
+
+    addKnoten(node){
+        // Die Menge der Knoten
+        this.knoten.push(node);
+
+        // Kanten
+        this.kanten.addNode(node);
+    }
+
+    addConnection(nodex, nodey, con){
+        this.kanten.addConnection(nodex, nodey, con);
+        
+        const knotenx = this.knoten[nodex];
+        const knoteny = this.knoten[nodey];
+
+        // alert(knotenx.parVerbindung.textContent); //.querySelector("#verbindung").textContent);
+
+        // Testmäßig eine Anzeige
+        knotenx.parVerbindung.textContent += "Verbunden mit: " + knoteny.id + " (" + con + ")";
+        knoteny.parVerbindung.textContent += "Verbunden mit: " + knotenx.id + " (" + con + ")";
+    }
 
 }
 
+function newNode(){
+    const knoten = new Node("Test");
+}
+
+// Den Graphen erstellen (die Verbindungen)
+
+
+function newGraph(){
+    const graph = new Graph();
+    const knoten1 = new Node("Test1");
+    const knoten2 = new Node("Anforderung");
+    const knoten3 = new Node("Test3");
+    
+    graph.addKnoten(knoten1);
+    graph.addKnoten(knoten2);
+    graph.addKnoten(knoten3);
+
+    graph.addConnection(0, 1, 1);
+    graph.addConnection(0, 2, 1);
+    graph.addConnection(1, 2, 2);
+    
+    
+    // Der zweite Graph
+    const graph2 = new Graph();
+    const knoten12 = new Node("Test12");
+    const knoten22 = new Node("Anforderung");
+    const knoten32 = new Node("Test32");
+    
+    graph2.addKnoten(knoten12);
+    graph2.addKnoten(knoten22);
+    graph2.addKnoten(knoten32);
+
+    graph2.addConnection(0, 1, 1);
+    graph2.addConnection(0, 2, 1);
+    graph2.addConnection(1, 2, 2);
+
+    graphenVerbinden(graph, graph2);
+}
+
+function graphenVerbinden(graph1, graph2){
+    // Verbindung "2" suchen
+    let wx = -1;
+    let wy = -1;
+    
+    for(let i=0; i<graph1.knoten.length; i++){
+        for(let j=0; j<graph1.knoten.length; j++){
+            // alert("i: " + i + graph1.kanten.kanten[i][j]);
+            if(graph1.kanten.kanten[i][j] == 2){
+                if(graph2.kanten.kanten[i][j] == 2){
+                    alert("Gemeinsame Verbindung gefunden");
+                    wx = i;
+                    wy = j;
+
+                    i = graph1.knoten.length;
+                    break;
+                }
+            }   
+        }
+    }
+
+    if(wx != -1){
+        // A -> B und A -> C
+        const knot1 = new Node("Fantasma");
+        const knot2 = graph1.knoten[wy];
+        const knot3 = graph2.knoten[wy];
+
+        // Verbindung löschen
+        graph1.kanten.kanten[wx][wy] = 0; 
+        // graph1.knoten[2].info = "Fantasma"; // 2
+
+        graph1.addKnoten(knot1); // 3
+        graph1.addKnoten(knot2); // 2
+        graph1.addKnoten(knot3); // 5
+
+        graph1.addConnection(0, 3, 1); 
+        graph1.addConnection(3, 2, 1);
+        graph1.addConnection(3, 5, 1);
+        graph1.addConnection(2, 5, 3);
+
+        for( let i=0; i<graph2.knoten.length; i++){
+            graph2.knoten[i].el.className = "draggable-el-del";
+        }
+
+        // Den Knoten aus dem zweiten Graphen. der zu dem ersten
+        // übernommen wurde die Farbe des ersten geben
+        knot3.el.className = "draggable-el";
+    }
+    
+}
+
+
 /*
 const myNode1 = new Node("Hauptknoten");
+myNode1.append("left", "Links");
 myNode1.append("left", "Links");
 myNode1.append("right", "Rechts");
 myNode1.left.append("left", "Unterlinks");
