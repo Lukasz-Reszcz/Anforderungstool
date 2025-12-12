@@ -16,9 +16,14 @@ function blockVerschieben(){
     const block = document.getElementById("block");
 
     ctx.zIndex = 5;
-    ctx.clearRect(xViereck-2, yViereck-2, laengeViereck+4, hoeheViereck+4);
+    //ctx.clearRect(xViereck-2, yViereck-2, laengeViereck+4, hoeheViereck+4);
+    ctx.clearRect(0,0, canvas.width, canvas.height);
     xViereck += 10;
 
+    // Das Hauptviereck zeichnen
+    ctx.beginPath();
+    ctx.rect(200, 200, 100, 100);
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.rect(xViereck, yViereck, laengeViereck, hoeheViereck);
