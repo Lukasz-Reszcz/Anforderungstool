@@ -2,18 +2,29 @@
 nodeMaxID = 0;
 graphMaxID = 0;
 verbindenAktiv = false;
+
+verbinden_graph_id = 0;
+
+// Verbindung Von - Nach
+verbindungVon = 0;
+verbindungNach = 0;
+
+// Debug
+hauptgraph = null;
+
 class Node {
 	constructor(info){
         // ID
         nodeMaxID += 1;
     	this.id = nodeMaxID;
+        this.graph_id = 0;
         
         // Blätter
 		this.left = null;
         this.right = null;
 
         // Info
-        this.info = info;  
+        this.info = info; //"Anforderung";  
         this.anforderungsquelle = null;
 
         // DeKnoten
@@ -35,6 +46,14 @@ class Node {
         else if(direction == "right"){
         	this.right = new Node(info);
         }
+    }
+
+    set_graph_id(gid){
+        this.graph_id = gid; 
+    }
+
+    set_info(info){
+        this.info = info;
     }
     
     print_graph(){
@@ -78,7 +97,7 @@ class Node {
         // Den Knoten auf einer Stelle setzen (oben links)
         this.el = document.createElement("div");
         this.el.className = "draggable-el";
-        this.el.id = "knoten_" + this.id;
+        this.el.id = this.id;
 
         const graphContainer = document.getElementById("nodec");
         
@@ -92,17 +111,7 @@ class Node {
         this.par.textContent = this.info;
         this.el.appendChild(this.par);
 
-        // ID
-        const parID = document.createElement("p");
-        parID.textContent = "ID: " + this.el.id;
-        this.el.appendChild(parID);
-
-        // Verbunden mit
-        this.parVerbindung = document.createElement("p");
-        this.parVerbindung.id = "verbindung";
-        this.parVerbindung.textContent = "Verbindungen\n";
-        this.el.appendChild(this.parVerbindung);
-
+        // Menü
         this.menuContainer = document.createElement("div");
         this.menuContainer.id = "menu";
         this.menuContainer.className = "dropdown-content";
@@ -112,7 +121,13 @@ class Node {
         this.menuOption.className = "menuOption";
         this.menuOption.textContent = "verbinden";
 
+        this.menuOption_info = document.createElement("a");
+        this.menuOption_info.className = "menuOption";
+        this.menuOption_info.textContent = "Knoteninfo";
+        
         this.menuContainer.appendChild(this.menuOption);
+        this.menuContainer.appendChild(this.menuOption_info);
+        
         this.el.appendChild(this.menuContainer);
 
         graphContainer.appendChild(this.el);
@@ -134,6 +149,13 @@ class Node {
             this.isDragging = false;
 
             event.currentTarget.style.zIndex = 1;
+
+            // ctx.beginPath();
+            // ctx.moveTo(10, 10);
+            // ctx.lineTo(parseInt(this.el.style.left), parseInt(this.el.style.top));
+            // ctx.stroke();
+
+
         })
 
         this.el.addEventListener('mousemove', (event) =>{ // Target hinzugefügt
@@ -173,8 +195,29 @@ class Node {
                 if(mOpt.textContent == "verbinden"){
                     if(verbindenAktiv){
                         document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + 
-                            // verbinden->Menü->Knoten
-                            event.target.parentElement.parentElement.id;
+                            
+                        // verbinden->Menü->Knoten
+                        event.target.parentElement.parentElement.id;
+
+                        this.graph_id = verbinden_graph_id;
+                        
+                        verbinden_graph_id = null;
+
+                        // Verbindung
+                        verbindungNach = this.id;
+
+                        // Debug
+                        alert("VonID: " + verbindungVon + " NachID: " + verbindungNach);
+                        hauptgraph.addConnection(verbindungVon-1, verbindungNach-1, 1);
+
+                        hauptgraph.zeichneVerbindungen();
+
+
+                        verbindungVon = 0;
+                        verbindungNach = 0;
+
+
+
                         this.aktiveMenuOption = null; // Noch nützlich?
                         verbindenAktiv = false;
                     }
@@ -183,11 +226,31 @@ class Node {
                         const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
                         document.getElementById("ausgabetest").textContent = msg;
 
+                        // graphenIDVon
+                        verbinden_graph_id = this.graph_id;
+
+                        // VerbindungVon
+                        verbindungVon = this.id;
+
+                        // Zu dem Graphen anbinden
+                        if(this.graph_id != 1){
+                            hauptgraph.addKnoten(this);
+
+                            // Debug
+                            alert("Der Knoten wurde hinzugefügt, ID: " + this.id);
+                        }
+                        
                         // global machen?
                         this.aktiveMenuOption = "verbinden"; // Noch nützlich?
                         verbindenAktiv = true;
                     }
-
+                }
+                if(mOpt.textContent == "Knoteninfo"){
+                    let infoString = "GraphID: " + this.graph_id +
+                        "KnotenID: " + this.id + 
+                        "Anforderung: " + this.info +
+                        "Quelle: " + this.anforderungsquelle;
+                    alert(infoString);
                 }
             })
         }
@@ -210,11 +273,11 @@ class Vertex {
 
         // console.log(this.kanten);
 
-        for(let i=1; i<this.size-1; i++){
+        for(let i=1; i<this.size; i++){
             this.kanten[this.size-1].push(0);
         }
 
-        for(let i=0; i<this.size-1; i++){
+        for(let i=0; i<this.size; i++){
             this.kanten[i][this.size-1] = 0;
             this.kanten[this.size-1][i] = 0;
         }
@@ -251,6 +314,10 @@ class Graph {
         this.id = graphMaxID;
         this.knoten = new Array();
         this.kanten = new Vertex();
+
+        this.knoten_h = new Node("Knotenbezeichnung");
+
+        this.addKnoten(this.knoten_h);
     }
 
     addKnoten(node){
@@ -259,6 +326,10 @@ class Graph {
 
         // Kanten
         this.kanten.addNode(node);
+
+        // Knoten mit dem Graphen verbinden
+        // node.graph_id = this.id;
+        node.set_graph_id(this.id);
     }
 
     addConnection(nodex, nodey, con){
@@ -269,9 +340,46 @@ class Graph {
 
         // alert(knotenx.parVerbindung.textContent); //.querySelector("#verbindung").textContent);
 
+        // ctx.beginPath();
+        // ctx.lineTo(parseInt(knotenx.el.style.left), parseInt(knotenx.el.style.top));
+        // ctx.lineTo(parseInt(knoteny.el.style.left), parseInt(knoteny.el.style.top));
+        
+        // ctx.stroke();
+
         // Testmäßig eine Anzeige
-        knotenx.parVerbindung.textContent += "Verbunden mit: " + knoteny.id + " (" + con + ")";
-        knoteny.parVerbindung.textContent += "Verbunden mit: " + knotenx.id + " (" + con + ")";
+        // knotenx.parVerbindung.textContent += "Verbunden mit: " + knoteny.id + " (" + con + ")";
+        // knoteny.parVerbindung.textContent += "Verbunden mit: " + knotenx.id + " (" + con + ")";
+    }
+
+    zeichneVerbindungen(){
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+
+        alert("Länge: " + this.knoten.length);
+
+        let str = "";
+        for (let i=0; i<this.knoten.length; i++){
+            for (let j=0; j<this.knoten.length; j++){
+                str += this.kanten.kanten[i][j] + " ";
+
+                if(this.kanten.kanten[i][j] === 1){
+                    const knotenx = this.knoten[i];
+                    const knoteny = this.knoten[j];
+
+                    ctx.beginPath();
+                    ctx.moveTo(parseInt(knotenx.el.style.left), parseInt(knotenx.el.style.top));
+                    ctx.lineTo(parseInt(knoteny.el.style.left), parseInt(knoteny.el.style.top));
+                    
+                    ctx.stroke();
+                }
+
+            }
+        }
+
+        alert(str);
+
     }
 
 }
@@ -280,23 +388,42 @@ function newNode(){
     const knoten = new Node("Test");
 }
 
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = document.getElementById("nodec").clientWidth;
+canvas.height = document.getElementById("nodec").clientHeight;
+
 // Den Graphen erstellen (die Verbindungen)
 
 
 function newGraph(){
-    const graph = new Graph();
-    const knoten1 = new Node("Test1");
-    const knoten2 = new Node("Anforderung");
-    const knoten3 = new Node("Test3");
-    
-    graph.addKnoten(knoten1);
-    graph.addKnoten(knoten2);
-    graph.addKnoten(knoten3);
+    hauptgraph = new Graph();
 
-    graph.addConnection(0, 1, 1);
-    graph.addConnection(0, 2, 1);
-    graph.addConnection(1, 2, 2);
+    const knoten1 = new Node("Test1");
+    // const k1 = document.getElementById("knoten_1");
+    // k1.style.left = "100px";
+    // k1.style.top = "100px";
     
+
+    const knoten2 = new Node("Test2");
+    const knoten3 = new Node("Test3");
+
+
+    hauptgraph.addKnoten(knoten1);
+    hauptgraph.addKnoten(knoten2);
+    hauptgraph.addKnoten(knoten3);
+
+    hauptgraph.addConnection(0, 1, 1);
+    hauptgraph.addConnection(0, 2, 1);
+    hauptgraph.addConnection(1, 2, 2);
+
+    hauptgraph.zeichneVerbindungen();
+
+
+
+    /*
+    const graph = new Graph();
     
     // Der zweite Graph
     const graph2 = new Graph();
@@ -311,8 +438,9 @@ function newGraph(){
     graph2.addConnection(0, 1, 1);
     graph2.addConnection(0, 2, 1);
     graph2.addConnection(1, 2, 2);
+    */
 
-    graphenVerbinden(graph, graph2);
+    // graphenVerbinden(graph, graph2);
 }
 
 function graphenVerbinden(graph1, graph2){
@@ -364,6 +492,22 @@ function graphenVerbinden(graph1, graph2){
         knot3.el.className = "draggable-el";
     }
     
+}
+
+function zeichneVerbindung(){
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    alert("hier");
+
+    const str = "";
+    for (let i=0; i<hauptgraph.knoten.length; i++){
+        for (let j=0; j<hauptgraph.knoten.length; j++){
+            str += hauptgraph.kanten.kanten[i][j] + " ";
+        }
+    }
+
+    alert(str);
 }
 
 

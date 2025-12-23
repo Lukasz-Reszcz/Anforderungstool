@@ -16,6 +16,10 @@
     display: block;
 }
 
+.menuOption {
+    display: block;
+}
+
 
 .draggable-el-del {
     position: absolute;

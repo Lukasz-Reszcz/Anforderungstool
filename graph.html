@@ -10,9 +10,12 @@
     <button onclick="newNode()"> Neuer Knoten</button> 
     <button onclick="newGraph()"> Neuer Graph </button>
     <button onclick="graphenVerbinden()"> Graphen verbinden </button>
+    <button onclick="zeichneVerbindung()">verbindung Zeichnen</button>
 
     <p id="ausgabetest"></p>
-    <div class="draggable-elx" id="nodec">
+    <div class="draggable-elx" id="nodec" style="width: 1500px; height: 500px;">
+        <!--width="800" height="400"-->
+        <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
         <!--
         <div class="draggable-el" id="node1">
             <p class="">Z</p>
