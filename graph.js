@@ -11,6 +11,7 @@ verbindungNach = 0;
 
 // Debug
 hauptgraph = null;
+hauptgraph_1 = null;
 
 class Node {
 	constructor(info){
@@ -135,6 +136,13 @@ class Node {
 
     make_draggable(){
         this.el.addEventListener('mousedown', (event) => {
+            // Debug
+            document.getElementById("ausgabetest").textContent = "Mouse down " + event.target.nodeName;
+
+            if(event.target.nodeName == "A") {
+                return;
+            }
+
             this.activeElement = event.currentTarget;
             this.activeElement.style.zIndex = 100;
             this.isDragging = true;
@@ -143,8 +151,10 @@ class Node {
             this.computedStyleMap.cursor = "grabbing";
         })
 
-        // Debug
         this.el.addEventListener('mouseup', (event) => {
+            // Debug
+            document.getElementById("ausgabetest").textContent = "Mouse up";
+
             this.activeElement = null;
             this.isDragging = false;
 
@@ -159,8 +169,12 @@ class Node {
         })
 
         this.el.addEventListener('mousemove', (event) =>{ // Target hinzugefügt
-            if(!this.activeElement)  return;
-            // if(!this.isDragging) return;
+            // Debug
+            document.getElementById("ausgabetest").textContent = "Mouse move - " + event.code;
+
+            if(this.activeElement == null) {
+                return;
+            }
 
             const deltaX = event.clientX - lastX;
             const deltaY = event.clientY - lastY;
@@ -254,7 +268,6 @@ class Node {
                 }
             })
         }
-        
     }
 }
 
@@ -398,7 +411,22 @@ canvas.height = document.getElementById("nodec").clientHeight;
 
 
 function newGraph(){
-    hauptgraph = new Graph();
+    if(hauptgraph == null){
+        hauptgraph = new Graph();
+    }
+    else if (hauptgraph_1 == null){
+        hauptgraph_1 = new Graph();
+
+        const knoten2 = new Node("Neuer Graph");
+        hauptgraph_1.addKnoten(knoten2);
+        hauptgraph.addConnection(0, 1, 1);
+
+        return;
+    }
+    else {
+        alert("Es sind bereits zwei Graphen vorhanden");
+        return;
+    }
 
     const knoten1 = new Node("Test1");
     // const k1 = document.getElementById("knoten_1");
