@@ -3,6 +3,8 @@ nodeMaxID = 0;
 graphMaxID = 0;
 verbindenAktiv = false;
 
+verbindungKnotenHinzugefuegt = false;
+
 verbinden_graph_id = 0;
 
 // Verbindung Von - Nach
@@ -14,11 +16,15 @@ hauptgraph = null;
 hauptgraph_1 = null;
 
 class Node {
+    // Hilft, um später die Knoten aus IDs zu finden
+    static register = new Map();
+    
 	constructor(info){
         // ID
         nodeMaxID += 1;
     	this.id = nodeMaxID;
         this.graph_id = 0;
+        Node.register.set(this.id, this);
         
         // Blätter
 		this.left = null;
@@ -38,6 +44,10 @@ class Node {
         // Menu
         this.addMenu();
         this.aktiveMenuOption = null;
+    }
+
+    static getByID(id){
+        return Node.register.get(id);
     }
     
     append(direction, info){
@@ -136,9 +146,8 @@ class Node {
 
     make_draggable(){
         this.el.addEventListener('mousedown', (event) => {
-            // Debug
-            document.getElementById("ausgabetest").textContent = "Mouse down " + event.target.nodeName;
-
+            // Wenn der Knoten zwar angeclicked wurde, aber mit dem Zweck um zwei Knoten
+            // zu verbinden
             if(event.target.nodeName == "A") {
                 return;
             }
@@ -152,33 +161,19 @@ class Node {
         })
 
         this.el.addEventListener('mouseup', (event) => {
-            // Debug
-            document.getElementById("ausgabetest").textContent = "Mouse up";
-
             this.activeElement = null;
             this.isDragging = false;
 
             event.currentTarget.style.zIndex = 1;
-
-            // ctx.beginPath();
-            // ctx.moveTo(10, 10);
-            // ctx.lineTo(parseInt(this.el.style.left), parseInt(this.el.style.top));
-            // ctx.stroke();
-
-
         })
 
         this.el.addEventListener('mousemove', (event) =>{ // Target hinzugefügt
-            // Debug
-            document.getElementById("ausgabetest").textContent = "Mouse move - " + event.code;
-
             if(this.activeElement == null) {
                 return;
             }
 
             const deltaX = event.clientX - lastX;
             const deltaY = event.clientY - lastY;
-
         
             const elementX = parseInt(window.getComputedStyle(this.el).getPropertyValue('left'));
             const elementY = parseInt(window.getComputedStyle(this.el).getPropertyValue('top'));
@@ -209,9 +204,8 @@ class Node {
                 if(mOpt.textContent == "verbinden"){
                     if(verbindenAktiv){
                         document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + 
-                            
-                        // verbinden->Menü->Knoten
-                        event.target.parentElement.parentElement.id;
+                            // verbinden->Menü->Knoten
+                            event.target.parentElement.parentElement.id;
 
                         this.graph_id = verbinden_graph_id;
                         
@@ -220,20 +214,42 @@ class Node {
                         // Verbindung
                         verbindungNach = this.id;
 
-                        // Debug
-                        alert("VonID: " + verbindungVon + " NachID: " + verbindungNach);
-                        hauptgraph.addConnection(verbindungVon-1, verbindungNach-1, 1);
+                        // Verbindung von innen aufbauen
+                        if(!verbindungKnotenHinzugefuegt){
+                            console.log("verbindungVon: " + verbindungVon);
+                            console.log("verbindungNach: " + verbindungNach);
 
+                            const knoten = Node.getByID(verbindungNach);
+                            console.log(knoten);
+                            hauptgraph.addKnoten(knoten);
+
+                            console.log(hauptgraph.kanten)
+
+                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
+                        }
+                        else{
+                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
+                        }
+
+                        
                         hauptgraph.zeichneVerbindungen();
-
+                        
+                        // alert("Die GraphID: " + aktivGraphID);
+                        // if(aktivGraphID === 1){
+                        //     hauptgraph.addConnection(verbindungVon-1, verbindungNach-1, 1);
+                        //     hauptgraph.zeichneVerbindungen();
+                        // }
+                        // else if (aktivGraphID === 2){
+                        //     hauptgraph_1.addConnection(verbindungVon-1, verbindungNach-1, 1);
+                        //     hauptgraph_1.zeichneVerbindungen();
+                        // }
 
                         verbindungVon = 0;
                         verbindungNach = 0;
 
-
-
                         this.aktiveMenuOption = null; // Noch nützlich?
                         verbindenAktiv = false;
+                        verbindungKnotenHinzugefuegt = false;
                     }
                     else {
                         // const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
@@ -248,14 +264,12 @@ class Node {
 
                         // Zu dem Graphen anbinden
                         if(this.graph_id != 1){
+                            verbindungKnotenHinzugefuegt = true;
                             hauptgraph.addKnoten(this);
 
-                            // Debug
-                            alert("Der Knoten wurde hinzugefügt, ID: " + this.id);
+                            console.log("Zu dem Graphen hinzugefügt\n" + this);
                         }
-                        
-                        // global machen?
-                        this.aktiveMenuOption = "verbinden"; // Noch nützlich?
+
                         verbindenAktiv = true;
                     }
                 }
@@ -278,21 +292,26 @@ class Vertex {
         this.size = 0;
     }
 
-    addNode(node){
-        // this.nodes.push(node.id);
-        this.nodes.push(node);
+    addNode(nodeID){
+        // falls nicht drinne
+        if(this.nodes.includes(nodeID)){
+            return;
+        }
+            
+        this.nodes.push(nodeID);
         this.size++;
         this.kanten.push([0]);
 
-        // console.log(this.kanten);
-
-        for(let i=1; i<this.size; i++){
+        // Die letzte Reihe
+        for(let i=2; i<this.size; i++){
             this.kanten[this.size-1].push(0);
         }
 
+        // Die Reihe rechts hinzufügen
         for(let i=0; i<this.size; i++){
-            this.kanten[i][this.size-1] = 0;
-            this.kanten[this.size-1][i] = 0;
+            // Sonst wird die erste Reihe um ein 0 mehr haben
+            if(this.size == 1)  continue;
+            this.kanten[i].push(0);
         }
     }
 
@@ -305,20 +324,6 @@ class Vertex {
         }
         this.kanten[nodex][nodey] = con;
     }
-
-    print(){
-        console.log(this.kanten);
-        /*
-        for(let i=0; i<this.size; i++){
-            for(let j=0; j<this.size; j++){
-                if (i !== j){
-                    continue;
-                }
-                System.out.log(this.kanten[i][j]);
-            }
-        }
-        */
-    }
 }
 
 class Graph {
@@ -326,7 +331,8 @@ class Graph {
         graphMaxID += 1;
         this.id = graphMaxID;
         this.knoten = new Array();
-        this.kanten = new Vertex();
+        this.kanten = new Array();
+        this.size = 0;
 
         this.knoten_h = new Node("Knotenbezeichnung");
 
@@ -335,33 +341,43 @@ class Graph {
 
     addKnoten(node){
         // Die Menge der Knoten
-        this.knoten.push(node);
+        if(this.knoten.includes(node.id))
+            return;
+        this.knoten.push(node.id);
 
         // Kanten
-        this.kanten.addNode(node);
+        this.size++;
+        this.kanten.push([0]);
+
+        // Die letzte Reihe
+        for(let i=2; i<this.size; i++){
+            this.kanten[this.size-1].push(0);
+        }
+
+        // Die Reihe rechts hinzufügen
+        for(let i=0; i<this.size; i++){
+            // Sonst wird die erste Reihe um ein 0 mehr haben
+            if(this.size == 1)  continue;
+            this.kanten[i].push(0);
+        }
 
         // Knoten mit dem Graphen verbinden
         // node.graph_id = this.id;
         node.set_graph_id(this.id);
+             
     }
 
-    addConnection(nodex, nodey, con){
-        this.kanten.addConnection(nodex, nodey, con);
-        
-        const knotenx = this.knoten[nodex];
-        const knoteny = this.knoten[nodey];
+    addConnection(nodexid, nodeyid, con){
+        const knotenx = this.knoten.indexOf(nodexid);
+        const knoteny = this.knoten.indexOf(nodeyid);
 
-        // alert(knotenx.parVerbindung.textContent); //.querySelector("#verbindung").textContent);
+        console.log("Knotenx: " + knotenx);
+        console.log("Knoteny: " + knoteny);
+        console.log(this.kanten);
 
-        // ctx.beginPath();
-        // ctx.lineTo(parseInt(knotenx.el.style.left), parseInt(knotenx.el.style.top));
-        // ctx.lineTo(parseInt(knoteny.el.style.left), parseInt(knoteny.el.style.top));
-        
-        // ctx.stroke();
+        this.kanten[knotenx][knoteny] = con;
 
-        // Testmäßig eine Anzeige
-        // knotenx.parVerbindung.textContent += "Verbunden mit: " + knoteny.id + " (" + con + ")";
-        // knoteny.parVerbindung.textContent += "Verbunden mit: " + knotenx.id + " (" + con + ")";
+        console.log(this.kanten);
     }
 
     zeichneVerbindungen(){
@@ -370,16 +386,11 @@ class Graph {
 
         ctx.clearRect(0,0, canvas.width, canvas.height);
 
-        alert("Länge: " + this.knoten.length);
-
-        let str = "";
         for (let i=0; i<this.knoten.length; i++){
             for (let j=0; j<this.knoten.length; j++){
-                str += this.kanten.kanten[i][j] + " ";
-
-                if(this.kanten.kanten[i][j] === 1){
-                    const knotenx = this.knoten[i];
-                    const knoteny = this.knoten[j];
+                if(this.kanten[i][j] === 1){
+                    const knotenx = Node.getByID(this.knoten[i]);
+                    const knoteny = Node.getByID(this.knoten[j]);
 
                     ctx.beginPath();
                     ctx.moveTo(parseInt(knotenx.el.style.left), parseInt(knotenx.el.style.top));
@@ -387,14 +398,9 @@ class Graph {
                     
                     ctx.stroke();
                 }
-
             }
         }
-
-        alert(str);
-
     }
-
 }
 
 function newNode(){
@@ -429,9 +435,9 @@ function newGraph(){
     }
 
     const knoten1 = new Node("Test1");
-    // const k1 = document.getElementById("knoten_1");
-    // k1.style.left = "100px";
-    // k1.style.top = "100px";
+    console.log(knoten1);
+    knoten1.el.style.left = "100px";
+    // knoten1.style.top = "100px";
     
 
     const knoten2 = new Node("Test2");
@@ -442,13 +448,9 @@ function newGraph(){
     hauptgraph.addKnoten(knoten2);
     hauptgraph.addKnoten(knoten3);
 
-    hauptgraph.addConnection(0, 1, 1);
-    hauptgraph.addConnection(0, 2, 1);
-    hauptgraph.addConnection(1, 2, 2);
-
-    hauptgraph.zeichneVerbindungen();
-
-
+    hauptgraph.addConnection(1, 2, 1);
+    hauptgraph.addConnection(1, 3, 1);
+    hauptgraph.addConnection(2, 3, 2);
 
     /*
     const graph = new Graph();
@@ -478,9 +480,9 @@ function graphenVerbinden(graph1, graph2){
     
     for(let i=0; i<graph1.knoten.length; i++){
         for(let j=0; j<graph1.knoten.length; j++){
-            // alert("i: " + i + graph1.kanten.kanten[i][j]);
-            if(graph1.kanten.kanten[i][j] == 2){
-                if(graph2.kanten.kanten[i][j] == 2){
+            // alert("i: " + i + graph1.kanten[i][j]);
+            if(graph1.kanten[i][j] == 2){
+                if(graph2.kanten[i][j] == 2){
                     alert("Gemeinsame Verbindung gefunden");
                     wx = i;
                     wy = j;
@@ -499,7 +501,7 @@ function graphenVerbinden(graph1, graph2){
         const knot3 = graph2.knoten[wy];
 
         // Verbindung löschen
-        graph1.kanten.kanten[wx][wy] = 0; 
+        graph1.kanten[wx][wy] = 0; 
         // graph1.knoten[2].info = "Fantasma"; // 2
 
         graph1.addKnoten(knot1); // 3
@@ -523,19 +525,9 @@ function graphenVerbinden(graph1, graph2){
 }
 
 function zeichneVerbindung(){
-    const canvas = document.getElementById("myCanvas");
-    const ctx = canvas.getContext("2d");
-
-    alert("hier");
-
-    const str = "";
-    for (let i=0; i<hauptgraph.knoten.length; i++){
-        for (let j=0; j<hauptgraph.knoten.length; j++){
-            str += hauptgraph.kanten.kanten[i][j] + " ";
-        }
-    }
-
-    alert(str);
+    console.log("zeichneVer");
+    console.log(hauptgraph);
+    hauptgraph.zeichneVerbindungen();
 }
 
 
@@ -562,6 +554,7 @@ console.log("Anforderungsquelle: " + myNode1.left.anforderungsquelle);
 
 
 // code für draggable (ziehbar) Elementen
+
 const elements = document.getElementsByClassName("draggable-el");
 
 let isDragging = false;
@@ -602,4 +595,5 @@ document.addEventListener('mouseup', ()=>{
         element.style.cursor = "grab";
     }
 })
+
 
