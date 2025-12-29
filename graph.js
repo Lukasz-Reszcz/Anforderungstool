@@ -207,14 +207,64 @@ class Node {
                             // verbinden->Menü->Knoten
                             event.target.parentElement.parentElement.id;
 
-                        this.graph_id = verbinden_graph_id;
-                        
-                        verbinden_graph_id = null;
-
+                        // this.graph_id = verbinden_graph_id;
+            
                         // Verbindung
                         verbindungNach = this.id;
 
+                        // Debug
+                        console.log("(0) VerbindungVon: " + verbindungVon +
+                            "\nVerbindungNach: " + verbindungNach);
+
+                        // Knoten aus verschiedenen Graphen
+                        // Keiner der Knoten gehört einem Graphen
+                        const knotenVon = Node.getByID(verbindungVon);
+                        const knotenNach = Node.getByID(verbindungNach);
+
+                        // Debug
+                        console.log(knotenNach);
+                        console.log("(1) VerbindungVon: " + knotenVon.graph_id +
+                            "\nVerbindungNach: " + knotenNach.graph_id);
+
+
+                        if(((knotenVon.graph_id !== 0 && knotenNach.graph_id !== 0) && 
+                                (knotenVon.graph_id != knotenNach.graph_id)) || 
+                            (knotenVon.graph_id === 0 && knotenNach.graph_id === 0)){
+                                alert("Die Verbindung kann nicht hergestellt werden");
+                                return;
+                        }
+
+                        // Im welchen Graphen 
+                        // const knotenVon = Node.getByID(verbindungVon);
+                        if(hauptgraph.knoten.includes(verbindungVon)){
+                            hauptgraph.addKnoten(knotenNach);
+                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
+                        }
+                        else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
+                            hauptgraph_1.addKnoten(knotenNach);
+                            hauptgraph_1.addConnection(verbindungVon, verbindungNach, 1);
+                        }
+                        // KnotenVon ist keinem Graphen zugewiesen
+                        else{
+                            let graphAktuell = knotenNach.graph_id;
+                            if(graphAktuell === 1){
+                                graphAktuell = hauptgraph;
+                            }
+                            else if(graphAktuell === 2){
+                                graphAktuell = hauptgraph_1;
+                            }
+
+                            graphAktuell.addKnoten(knotenVon);
+                            graphAktuell.addConnection(verbindungVon, verbindungNach, 1);
+                        }
+
+                        // Debug
+                        console.log("(2) VerbindungVon: " + verbindungVon +
+                            "\nVerbindungNach: " + verbindungNach);
+
+
                         // Verbindung von innen aufbauen
+                        /*
                         if(!verbindungKnotenHinzugefuegt){
                             console.log("verbindungVon: " + verbindungVon);
                             console.log("verbindungNach: " + verbindungNach);
@@ -223,16 +273,18 @@ class Node {
                             console.log(knoten);
                             hauptgraph.addKnoten(knoten);
 
-                            console.log(hauptgraph.kanten)
-
                             hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
                         }
                         else{
                             hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
                         }
+                        */
 
-                        
+                        leereVerbindungen();
                         hauptgraph.zeichneVerbindungen();
+                        if(hauptgraph_1 != null) hauptgraph_1.zeichneVerbindungen();
+                        // hauptgraph_1.zeichneVerbindungen();
+                        
                         
                         // alert("Die GraphID: " + aktivGraphID);
                         // if(aktivGraphID === 1){
@@ -243,6 +295,9 @@ class Node {
                         //     hauptgraph_1.addConnection(verbindungVon-1, verbindungNach-1, 1);
                         //     hauptgraph_1.zeichneVerbindungen();
                         // }
+
+                        // Reset von verbindungsvariablen
+                        verbinden_graph_id = null;
 
                         verbindungVon = 0;
                         verbindungNach = 0;
@@ -263,12 +318,19 @@ class Node {
                         verbindungVon = this.id;
 
                         // Zu dem Graphen anbinden
+                        // Im diesen Schritt ist noch nicht bekannt zu welchem Graphen der
+                        // Knoten angebindet werden soll
+                        // if (this.graph_id === 0){
+                        // }
+                        /*
                         if(this.graph_id != 1){
-                            verbindungKnotenHinzugefuegt = true;
+                            verbindungKnotenHinzugefuegt = 1;
                             hauptgraph.addKnoten(this);
 
                             console.log("Zu dem Graphen hinzugefügt\n" + this);
                         }
+                        if(this.graph_id )
+                        */
 
                         verbindenAktiv = true;
                     }
@@ -285,6 +347,7 @@ class Node {
     }
 }
 
+/*
 class Vertex {
     constructor(){
         this.nodes = [];
@@ -325,6 +388,7 @@ class Vertex {
         this.kanten[nodex][nodey] = con;
     }
 }
+*/
 
 class Graph {
     constructor(){
@@ -341,8 +405,9 @@ class Graph {
 
     addKnoten(node){
         // Die Menge der Knoten
-        if(this.knoten.includes(node.id))
+        if(this.knoten.includes(node.id)){
             return;
+        }
         this.knoten.push(node.id);
 
         // Kanten
@@ -363,8 +428,8 @@ class Graph {
 
         // Knoten mit dem Graphen verbinden
         // node.graph_id = this.id;
-        node.set_graph_id(this.id);
-             
+        let gegebenKnoten = Node.getByID(node.id);
+        gegebenKnoten.set_graph_id(this.id);             
     }
 
     addConnection(nodexid, nodeyid, con){
@@ -384,7 +449,8 @@ class Graph {
         const canvas = document.getElementById("myCanvas");
         const ctx = canvas.getContext("2d");
 
-        ctx.clearRect(0,0, canvas.width, canvas.height);
+        // Es wird nur ein Graph gezeichnet
+        // ctx.clearRect(0,0, canvas.width, canvas.height);
 
         for (let i=0; i<this.knoten.length; i++){
             for (let j=0; j<this.knoten.length; j++){
@@ -525,9 +591,15 @@ function graphenVerbinden(graph1, graph2){
 }
 
 function zeichneVerbindung(){
-    console.log("zeichneVer");
-    console.log(hauptgraph);
+    leereVerbindungen()
     hauptgraph.zeichneVerbindungen();
+    hauptgraph_1.zeichneVerbindungen();
+}
+
+// loesche Verbindung - verwirrend mit tatsächlichem Löschen
+// leere von leeren
+function leereVerbindungen(){
+    ctx.clearRect(0,0, canvas.width, canvas.height);
 }
 
 
@@ -587,13 +659,9 @@ for(const element of elements){
     })
 }
 
-
-
 document.addEventListener('mouseup', ()=>{
     if(isDragging){
         isDragging = false;
         element.style.cursor = "grab";
     }
 })
-
-
