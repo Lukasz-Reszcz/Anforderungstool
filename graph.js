@@ -454,7 +454,18 @@ class Graph {
 
         for (let i=0; i<this.knoten.length; i++){
             for (let j=0; j<this.knoten.length; j++){
-                if(this.kanten[i][j] === 1){
+                if(this.kanten[i][j] > 0){ // Ist diese Bedingung noch nötig?
+                    // If in effizientere Struktur umwandeln, wie z.B. switch
+                    if(this.kanten[i][j] === 1){
+                        ctx.strokeStyle = "blue";
+                    }
+                    if(this.kanten[i][j] === 2){
+                        ctx.strokeStyle = "lime";
+                    }
+                    if(this.kanten[i][j] === 3){
+                        ctx.strokeStyle = "red";
+                    }
+
                     const knotenx = Node.getByID(this.knoten[i]);
                     const knoteny = Node.getByID(this.knoten[j]);
 
@@ -485,61 +496,62 @@ canvas.height = document.getElementById("nodec").clientHeight;
 function newGraph(){
     if(hauptgraph == null){
         hauptgraph = new Graph();
+        const knoten1 = new Node("Anforderung");
+        
+        knoten1.el.style.left = "0px";
+        knoten1.el.style.top = "200px";
+
+        const knoten2 = new Node("Test1");
+        // const knoten3 = new Node("Test3");
+
+        knoten2.el.style.left = "200px";
+        knoten2.el.style.top = "200px";
+
+        hauptgraph.addKnoten(knoten1);
+        hauptgraph.addKnoten(knoten2);
+
+        console.log(knoten1);
+
+        hauptgraph.addConnection(1, 2, 1);
+        hauptgraph.addConnection(1, 3, 1);
+        hauptgraph.addConnection(2, 3, 2);
     }
     else if (hauptgraph_1 == null){
         hauptgraph_1 = new Graph();
 
-        const knoten2 = new Node("Neuer Graph");
+        const knoten2 = new Node("Anforderung");
         hauptgraph_1.addKnoten(knoten2);
-        hauptgraph.addConnection(0, 1, 1);
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
 
-        return;
+        const knoten12 = new Node("Neuer Graph");
+        hauptgraph_1.addKnoten(knoten12);
+
+        // Richtig platzieren
+        hauptgraph_1.knoten_h.el.style.top = "50px";
+        hauptgraph_1.knoten_h.el.style.left = "400px";
+
+        knoten2.el.style.top = "200px";
+        knoten2.el.style.left = "400px";
+
+        knoten12.el.style.top = "200px";
+        knoten12.el.style.left = "600px";
+
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
+        hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
     }
     else {
         alert("Es sind bereits zwei Graphen vorhanden");
         return;
     }
-
-    const knoten1 = new Node("Test1");
-    console.log(knoten1);
-    knoten1.el.style.left = "100px";
-    // knoten1.style.top = "100px";
-    
-
-    const knoten2 = new Node("Test2");
-    const knoten3 = new Node("Test3");
-
-
-    hauptgraph.addKnoten(knoten1);
-    hauptgraph.addKnoten(knoten2);
-    hauptgraph.addKnoten(knoten3);
-
-    hauptgraph.addConnection(1, 2, 1);
-    hauptgraph.addConnection(1, 3, 1);
-    hauptgraph.addConnection(2, 3, 2);
-
-    /*
-    const graph = new Graph();
-    
-    // Der zweite Graph
-    const graph2 = new Graph();
-    const knoten12 = new Node("Test12");
-    const knoten22 = new Node("Anforderung");
-    const knoten32 = new Node("Test32");
-    
-    graph2.addKnoten(knoten12);
-    graph2.addKnoten(knoten22);
-    graph2.addKnoten(knoten32);
-
-    graph2.addConnection(0, 1, 1);
-    graph2.addConnection(0, 2, 1);
-    graph2.addConnection(1, 2, 2);
-    */
-
-    // graphenVerbinden(graph, graph2);
 }
 
-function graphenVerbinden(graph1, graph2){
+function graphenVerbinden(){
+    const graph1 = hauptgraph;
+    const graph2 = hauptgraph_1;
+
+    let verbindungGefunden = false;
+    
     // Verbindung "2" suchen
     let wx = -1;
     let wy = -1;
@@ -549,7 +561,7 @@ function graphenVerbinden(graph1, graph2){
             // alert("i: " + i + graph1.kanten[i][j]);
             if(graph1.kanten[i][j] == 2){
                 if(graph2.kanten[i][j] == 2){
-                    alert("Gemeinsame Verbindung gefunden");
+                    verbindungGefunden = true;
                     wx = i;
                     wy = j;
 
@@ -560,6 +572,31 @@ function graphenVerbinden(graph1, graph2){
         }
     }
 
+    if(verbindungGefunden){
+        let knotenKopieG1 = new Node(Node.getByID(hauptgraph.knoten[wy]).info);
+
+        console.log(knotenKopieG1);
+        
+        // Knoten "B" in Fantasma umwandeln (abstraktes Ziel)
+        let abstraktKnoten = Node.getByID(hauptgraph.knoten[wy]);
+        abstraktKnoten.text = "Fantasma";
+
+        // Testmäßig - später Verändern
+        abstraktKnoten.par.textContent = abstraktKnoten.text;
+        hauptgraph.addKnoten(knotenKopieG1);
+
+
+        let knotenKopieG2 = Node.getByID(hauptgraph_1.knoten[wy]);
+        knotenKopieG2.set_graph_id(0);
+
+        hauptgraph.addKnoten(knotenKopieG2); // Wie verhält sich die ID?
+
+        hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG1.id, 1);
+        hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG2.id, 1);
+        hauptgraph.addConnection(knotenKopieG1.id, knotenKopieG2.id, 3);
+    }
+
+    /*
     if(wx != -1){
         // A -> B und A -> C
         const knot1 = new Node("Fantasma");
@@ -587,13 +624,14 @@ function graphenVerbinden(graph1, graph2){
         // übernommen wurde die Farbe des ersten geben
         knot3.el.className = "draggable-el";
     }
+    */
     
 }
 
 function zeichneVerbindung(){
     leereVerbindungen()
     hauptgraph.zeichneVerbindungen();
-    hauptgraph_1.zeichneVerbindungen();
+    if(hauptgraph_1 != null)    hauptgraph_1.zeichneVerbindungen();
 }
 
 // loesche Verbindung - verwirrend mit tatsächlichem Löschen
