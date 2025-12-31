@@ -588,12 +588,25 @@ function graphenVerbinden(){
 
         let knotenKopieG2 = Node.getByID(hauptgraph_1.knoten[wy]);
         knotenKopieG2.set_graph_id(0);
+        hauptgraph_1.knoten
 
         hauptgraph.addKnoten(knotenKopieG2); // Wie verhält sich die ID?
 
         hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG1.id, 1);
         hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG2.id, 1);
         hauptgraph.addConnection(knotenKopieG1.id, knotenKopieG2.id, 3);
+
+        // Den zweiten Graphen löschen
+        for(let i=0; i<hauptgraph_1.knoten.length; i++){
+            if(hauptgraph_1.knoten[i] === knotenKopieG2.id){
+                continue;
+            }
+            Node.getByID(hauptgraph_1.knoten[i]).el.style.visibility = "hidden";
+        }
+        hauptgraph_1 = null;
+
+        // Graphen neu zeichnen
+        zeichneVerbindung();
     }
 
     /*
