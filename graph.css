@@ -30,3 +30,8 @@
     cursor: grab;
     border-radius: 20px;
 }
+
+.graphenraum {
+    width: 33%;
+    float: left;
+}

@@ -7,30 +7,40 @@
     <link rel="stylesheet" href="graph.css"/>
 </head>
 <body>
-    <button onclick="newNode()"> Neuer Knoten</button> 
-    <button onclick="newGraph()"> Neuer Graph </button>
-    <button onclick="graphenVerbinden()"> Graphen verbinden </button>
-    <button onclick="zeichneVerbindung()">verbindung Zeichnen</button>
+    <button id="btnNeuerKnoten"> Neuer Knoten</button> 
+    <button id="btnNeuerGraph"> Neuer Graph </button>
+    <button id="btnGraphenVerbinden"> Graphen verbinden </button>
+    <button id="btnZeichneVerbindung">verbindung Zeichnen</button>
 
-    <p id="ausgabetest"></p>
-    <div class="draggable-elx" id="nodec" style="width: 1500px; height: 500px;">
-        <!--width="800" height="400"-->
-        <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
-        <!--
-        <div class="draggable-el" id="node1">
-            <p class="">Z</p>
+    <p id="ausgabetest">###</p>
+    <div class="hauptcontainer">
+        <div class="graphenraum" id="nodec" style="height: 500px;">
+            <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
+            <!--
+            <div class="draggable-el" id="node1">
+                <p class="">Z</p>
+            </div>
+    
+            <div class="draggable-el" id="node2">
+                <p class="" id="node2z">4</p>
+            </div>
+        -->
         </div>
-  
-        <div class="draggable-el" id="node2">
-            <p class="" id="node2z">4</p>
+        <div id="planung" class="graphenraum" style="height: 500px;">
+            <canvas id="myCanvasPlanung" style="border:1px solid #000000; width: 100%;">
+
+            </canvas>
         </div>
-    -->
-        
-        
+        <div id="soll-modell" class="graphenraum">
+            <canvas id="myCanvasPlanungS" style="border:1px solid #000000;">
+
+            </canvas>
+        </div>
     </div>
     
 
 
-    <script src="graph.js"></script>
+    <script src=""></script> 
+    <script type="module" src="graph.js"></script>
 </body>
 </html>
