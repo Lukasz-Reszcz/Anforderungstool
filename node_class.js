@@ -158,6 +158,13 @@ export default class Node {
                 return;
             }
 
+            // Die Kanten von den Boxen erreicht
+            // Zustand hinzufügen
+            // const graphDiv = document.getElementById('nodec');
+            // if(event.clientX > parseInt(graphDiv.clientLeft) + parseInt(graphDiv.clientWidth)){
+            //     return;
+            // }
+
             const deltaX = event.clientX - lastX;
             const deltaY = event.clientY - lastY;
         
@@ -217,6 +224,14 @@ export default class Node {
                                 (knotenVon.graph_id != knotenNach.graph_id)) || 
                             (knotenVon.graph_id === 0 && knotenNach.graph_id === 0)){
                                 alert("Die Verbindung kann nicht hergestellt werden");
+
+                                // reset
+                                verbinden_graph_id = null;
+                                verbindungVon = 0;
+                                verbindungNach = 0;
+                                verbindenAktiv = false;
+                                verbindungKnotenHinzugefuegt = false;
+                                
                                 return;
                         }
 
@@ -284,11 +299,8 @@ export default class Node {
 
                         // Reset von verbindungsvariablen
                         verbinden_graph_id = null;
-
                         verbindungVon = 0;
                         verbindungNach = 0;
-
-                        this.aktiveMenuOption = null; // Noch nützlich?
                         verbindenAktiv = false;
                         verbindungKnotenHinzugefuegt = false;
                     }

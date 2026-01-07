@@ -350,49 +350,6 @@ window.hauptgraph_1 = null;
 // }
 // Node - ENDE
 
-/*
-class Vertex {
-    constructor(){
-        this.nodes = [];
-        this.kanten = new Array();
-        this.size = 0;
-    }
-
-    addNode(nodeID){
-        // falls nicht drinne
-        if(this.nodes.includes(nodeID)){
-            return;
-        }
-            
-        this.nodes.push(nodeID);
-        this.size++;
-        this.kanten.push([0]);
-
-        // Die letzte Reihe
-        for(let i=2; i<this.size; i++){
-            this.kanten[this.size-1].push(0);
-        }
-
-        // Die Reihe rechts hinzufügen
-        for(let i=0; i<this.size; i++){
-            // Sonst wird die erste Reihe um ein 0 mehr haben
-            if(this.size == 1)  continue;
-            this.kanten[i].push(0);
-        }
-    }
-
-    // Soll diese Funktion in die Klasse Graph rein und "Vertex"
-    // als eine Datenstruktur betrachtet weden?
-    addConnection(nodex, nodey, con){
-        if(nodex > this.size - 1 || nodey > this.size - 1){
-            console.log("Der Knoten existiert nicht");
-            return;
-        }
-        this.kanten[nodex][nodey] = con;
-    }
-}
-*/
-
 class Graph {
     constructor(){
         graphMaxID += 1;
@@ -449,8 +406,26 @@ class Graph {
     }
 
     zeichneVerbindungen(){
-        const canvas = document.getElementById("myCanvas");
-        const ctx = canvas.getContext("2d");
+        let canvas = document.getElementById("myCanvas"); //
+        let ctx = canvas.getContext("2d");
+
+        let verschiebung = 0;
+        // Einmalig bei der Etappenwechseln von einem Graphen
+        if(graphenVerbindenZustand){
+            const knoten = document.querySelectorAll(".draggable-el");
+            verschiebung = parseInt(document.getElementById('nodec').clientWidth);
+            for(const element of knoten){
+                element.style.left = `${parseInt(element.style.left) + verschiebung}px`;
+            }
+
+            graphenVerbindenZustand = false;
+        }
+
+        if(modellEtappe === 2){
+            verschiebung = parseInt(document.getElementById('nodec').clientWidth);
+            canvas = document.getElementById("myCanvasPlanung"); //
+            ctx = canvas.getContext("2d");
+        }
 
         // Es wird nur ein Graph gezeichnet
         // ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -473,8 +448,8 @@ class Graph {
                     const knoteny = Node.getByID(this.knoten[j]);
 
                     ctx.beginPath();
-                    ctx.moveTo(parseInt(knotenx.el.style.left), parseInt(knotenx.el.style.top));
-                    ctx.lineTo(parseInt(knoteny.el.style.left), parseInt(knoteny.el.style.top));
+                    ctx.moveTo(parseInt(knotenx.el.style.left) - verschiebung, parseInt(knotenx.el.style.top));
+                    ctx.lineTo(parseInt(knoteny.el.style.left) - verschiebung, parseInt(knoteny.el.style.top));
                     
                     ctx.stroke();
                 }
@@ -490,8 +465,26 @@ function newNode(){
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = document.getElementById("nodec").clientWidth;
-canvas.height = document.getElementById("nodec").clientHeight;
+function setGraphenflaechen(){
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = document.getElementById("nodec").clientWidth;
+    canvas.height = document.getElementById("nodec").clientHeight;
+
+    const canvas1 = document.getElementById("myCanvasPlanung");
+    // canvas1.getContext("2d");
+    canvas1.width = document.getElementById("planung").clientWidth;
+    canvas1.height = document.getElementById("planung").clientHeight;
+
+    const canvas2 = document.getElementById("myCanvasPlanungSoll");
+    // canvas2.getContext("2d");
+    canvas2.width = document.getElementById("soll-modell").clientWidth;
+    canvas2.height = document.getElementById("soll-modell").clientHeight;
+
+}
+
+setGraphenflaechen();
 
 // Den Graphen erstellen (die Verbindungen)
 
@@ -536,8 +529,8 @@ function newGraph(){
         knoten2.el.style.top = "200px";
         knoten2.el.style.left = "400px";
 
-        knoten12.el.style.top = "200px";
-        knoten12.el.style.left = "600px";
+        knoten12.el.style.top = "400px";
+        knoten12.el.style.left = "400px";
 
         hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
         hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
@@ -548,6 +541,9 @@ function newGraph(){
         return;
     }
 }
+
+let graphenVerbindenZustand = false;
+let modellEtappe = 1;
 
 function graphenVerbinden(){
     const graph1 = hauptgraph;
@@ -608,8 +604,11 @@ function graphenVerbinden(){
         }
         hauptgraph_1 = null;
 
+        graphenVerbindenZustand = true;
+        modellEtappe = 2;
         // Graphen neu zeichnen
         zeichneVerbindung();
+        // graphenVerbindenZustand = false;
     }
 
     /*
@@ -653,7 +652,12 @@ function zeichneVerbindung(){
 // loesche Verbindung - verwirrend mit tatsächlichem Löschen
 // leere von leeren
 function leereVerbindungen(){
+    // Später mit for-Schleife umsetzen
     ctx.clearRect(0,0, canvas.width, canvas.height);
+
+    const canvas1 = document.getElementById('myCanvasPlanung');
+    let ctx1 = canvas1.getContext('2d');
+    ctx1.clearRect(0,0, canvas1.width, canvas1.height);
 }
 
 
@@ -687,7 +691,7 @@ let isDragging = false;
 let lastX = 0;
 let lastY = 0;
 
-
+/*
 for(const element of elements){
     element.addEventListener('mousedown', (event) => {
         isDragging = true;
@@ -719,6 +723,7 @@ document.addEventListener('mouseup', ()=>{
         element.style.cursor = "grab";
     }
 })
+*/
 //=========================================================
 // 
 document.getElementById("btnNeuerGraph").addEventListener('click', (event) => {
