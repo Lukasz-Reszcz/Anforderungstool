@@ -5,7 +5,11 @@ export default class Node {
     // Hilft, um später die Knoten aus IDs zu finden
     static register = new Map();
     static aktiverKnoten = null;
-    
+
+    // Zum Verbinden
+    static verbindenVon = null;
+    static verbindungAktiv = false;
+
 	constructor(info){
         // ID
         nodeMaxID += 1;
@@ -195,8 +199,84 @@ export default class Node {
                 knotenh[1].el.style.backgroundColor = null;
             }
 
-            Node.aktiverKnoten = this;
+            if(!Node.verbindungAktiv){
+                Node.aktiverKnoten = this;
+            }
+
             this.el.style.backgroundColor = "rgb(60, 179, 113)";
+
+            // Für verbinden mit
+            if(Node.verbindungAktiv){
+                Node.verbindungAktiv = false;
+                Node.verbindenVon = Node.aktiverKnoten;
+                Node.aktiverKnoten = this;
+
+
+                document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + this.id;
+                            // verbinden->Menü->Knoten
+                            // event.target.parentElement.parentElement.id;
+
+
+
+                // Knoten aus verschiedenen Graphen
+                // Keiner der Knoten gehört einem Graphen
+                const knotenVon = Node.verbindenVon;
+                const knotenNach = Node.aktiverKnoten;
+
+                // Verbindung
+                verbindungVon = knotenVon.id;
+                verbindungNach = this.id;
+                
+                if(((knotenVon.graph_id !== 0 && knotenNach.graph_id !== 0) && 
+                        (knotenVon.graph_id != knotenNach.graph_id)) || 
+                    (knotenVon.graph_id === 0 && knotenNach.graph_id === 0)){
+                        alert("Die Verbindung kann nicht hergestellt werden");
+
+                        // reset
+                        verbinden_graph_id = null;
+                        verbindungVon = 0;
+                        verbindungNach = 0;
+                        Node.verbindungAktiv = false;
+                        verbindungKnotenHinzugefuegt = false;
+                        
+                        return;
+                }
+
+                // Im welchen Graphen 
+                // const knotenVon = Node.getByID(verbindungVon);
+                if(hauptgraph.knoten.includes(verbindungVon)){
+                    hauptgraph.addKnoten(knotenNach);
+                    hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
+                }
+                else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
+                    hauptgraph_1.addKnoten(knotenNach);
+                    hauptgraph_1.addConnection(verbindungVon, verbindungNach, 1);
+                }
+                // KnotenVon ist keinem Graphen zugewiesen
+                else{
+                    let graphAktuell = knotenNach.graph_id;
+                    if(graphAktuell === 1){
+                        graphAktuell = hauptgraph;
+                    }
+                    else if(graphAktuell === 2){
+                        graphAktuell = hauptgraph_1;
+                    }
+
+                    graphAktuell.addKnoten(knotenVon);
+                    graphAktuell.addConnection(verbindungVon, verbindungNach, 1);
+                }
+
+                // leereVerbindungen();
+                // hauptgraph.zeichneVerbindungen();
+                // if(hauptgraph_1 != null) hauptgraph_1.zeichneVerbindungen();
+
+                // Reset von verbindungsvariablen
+                verbinden_graph_id = null;
+                verbindungVon = 0;
+                verbindungNach = 0;
+                Node.verbindungAktiv = false;
+                verbindungKnotenHinzugefuegt = false;
+            }
         })
     }
 
@@ -217,30 +297,18 @@ export default class Node {
             mOpt.addEventListener('mousedown', (event) => {
                 if(mOpt.textContent == "verbinden"){
                     if(verbindenAktiv){
-                        document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + 
-                            // verbinden->Menü->Knoten
-                            event.target.parentElement.parentElement.id;
-
-                        // this.graph_id = verbinden_graph_id;
+                        
             
                         // Verbindung
                         verbindungNach = this.id;
 
-                        // Debug
-                        console.log("(0) VerbindungVon: " + verbindungVon +
-                            "\nVerbindungNach: " + verbindungNach);
 
                         // Knoten aus verschiedenen Graphen
                         // Keiner der Knoten gehört einem Graphen
                         const knotenVon = Node.getByID(verbindungVon);
                         const knotenNach = Node.getByID(verbindungNach);
 
-                        // Debug
-                        console.log(knotenNach);
-                        console.log("(1) VerbindungVon: " + knotenVon.graph_id +
-                            "\nVerbindungNach: " + knotenNach.graph_id);
-
-
+                        
                         if(((knotenVon.graph_id !== 0 && knotenNach.graph_id !== 0) && 
                                 (knotenVon.graph_id != knotenNach.graph_id)) || 
                             (knotenVon.graph_id === 0 && knotenNach.graph_id === 0)){
@@ -280,43 +348,9 @@ export default class Node {
                             graphAktuell.addConnection(verbindungVon, verbindungNach, 1);
                         }
 
-                        // Debug
-                        console.log("(2) VerbindungVon: " + verbindungVon +
-                            "\nVerbindungNach: " + verbindungNach);
-
-
-                        // Verbindung von innen aufbauen
-                        /*
-                        if(!verbindungKnotenHinzugefuegt){
-                            console.log("verbindungVon: " + verbindungVon);
-                            console.log("verbindungNach: " + verbindungNach);
-
-                            const knoten = Node.getByID(verbindungNach);
-                            console.log(knoten);
-                            hauptgraph.addKnoten(knoten);
-
-                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
-                        }
-                        else{
-                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
-                        }
-                        */
-
                         leereVerbindungen();
                         hauptgraph.zeichneVerbindungen();
                         if(hauptgraph_1 != null) hauptgraph_1.zeichneVerbindungen();
-                        // hauptgraph_1.zeichneVerbindungen();
-                        
-                        
-                        // alert("Die GraphID: " + aktivGraphID);
-                        // if(aktivGraphID === 1){
-                        //     hauptgraph.addConnection(verbindungVon-1, verbindungNach-1, 1);
-                        //     hauptgraph.zeichneVerbindungen();
-                        // }
-                        // else if (aktivGraphID === 2){
-                        //     hauptgraph_1.addConnection(verbindungVon-1, verbindungNach-1, 1);
-                        //     hauptgraph_1.zeichneVerbindungen();
-                        // }
 
                         // Reset von verbindungsvariablen
                         verbinden_graph_id = null;
@@ -354,20 +388,6 @@ export default class Node {
                         verbindenAktiv = true;
                     }
                 }
-                if(mOpt.textContent == "Knoteninfo"){
-                    let infoString = "GraphID: " + this.graph_id +
-                        "KnotenID: " + this.id + 
-                        "Anforderung: " + this.info +
-                        "Quelle: " + this.anforderungsquelle;
-                    alert(infoString);
-                }
-                if(mOpt.textContent === "Knoten löschen"){
-                    const aktuellerKnoten = Node.getByID(this.id);
-
-                    if(this.graph_id === 1){
-                        hauptgraph.loescheKnoten(aktuellerKnoten);
-                    }
-                }
             })
         }
     }
@@ -378,5 +398,9 @@ export default class Node {
                         "Anforderung: " + this.info +
                         "Quelle: " + this.anforderungsquelle;
         alert(infoString);
+    }
+
+    verbindungErstellen(){
+
     }
 }
