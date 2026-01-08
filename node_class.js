@@ -4,6 +4,7 @@ let lastY = 0;
 export default class Node {
     // Hilft, um später die Knoten aus IDs zu finden
     static register = new Map();
+    static aktiverKnoten = null;
     
 	constructor(info){
         // ID
@@ -30,6 +31,9 @@ export default class Node {
         // Menu
         this.addMenu();
         this.aktiveMenuOption = null;
+
+        // aktiver Knoten
+        this.make_aktiverKnoten();
     }
 
     static getByID(id){
@@ -121,9 +125,14 @@ export default class Node {
         this.menuOption_info = document.createElement("a");
         this.menuOption_info.className = "menuOption";
         this.menuOption_info.textContent = "Knoteninfo";
+
+        this.menuOption_knotenloeschen = document.createElement("a");
+        this.menuOption_knotenloeschen.className = "menuOption";
+        this.menuOption_knotenloeschen.textContent = "Knoten löschen";
         
         this.menuContainer.appendChild(this.menuOption);
         this.menuContainer.appendChild(this.menuOption_info);
+        this.menuContainer.appendChild(this.menuOption_knotenloeschen);
         
         this.el.appendChild(this.menuContainer);
 
@@ -176,6 +185,18 @@ export default class Node {
 
             lastX = event.clientX;
             lastY = event.clientY;
+        })
+    }
+
+    // Den Knoten akitieren
+    make_aktiverKnoten(){
+        this.el.addEventListener('dblclick', (event) => {
+            for(let knotenh of Node.register){
+                knotenh[1].el.style.backgroundColor = null;
+            }
+
+            Node.aktiverKnoten = this;
+            this.el.style.backgroundColor = "rgb(60, 179, 113)";
         })
     }
 
@@ -340,7 +361,22 @@ export default class Node {
                         "Quelle: " + this.anforderungsquelle;
                     alert(infoString);
                 }
+                if(mOpt.textContent === "Knoten löschen"){
+                    const aktuellerKnoten = Node.getByID(this.id);
+
+                    if(this.graph_id === 1){
+                        hauptgraph.loescheKnoten(aktuellerKnoten);
+                    }
+                }
             })
         }
+    }
+
+    showInfo(){
+        let infoString = "GraphID: " + this.graph_id +
+                        "KnotenID: " + this.id + 
+                        "Anforderung: " + this.info +
+                        "Quelle: " + this.anforderungsquelle;
+        alert(infoString);
     }
 }

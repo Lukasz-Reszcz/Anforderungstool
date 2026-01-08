@@ -36,3 +36,13 @@
     float: left;
 }
 
+#knotenOptionen{
+    display: flex;
+    gap: 2px;
+}
+
+.knotenOpt{
+    border:1px solid #000000;
+    background-color: 	#DCDCDC;
+}
+

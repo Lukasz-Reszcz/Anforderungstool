@@ -17,6 +17,8 @@ window.verbindungNach = 0;
 window.hauptgraph = null;
 window.hauptgraph_1 = null;
 
+window.aktiverKnoten = null;
+
 // class Node {
 //     // Hilft, um später die Knoten aus IDs zu finden
 //     static register = new Map();
@@ -392,6 +394,24 @@ class Graph {
         gegebenKnoten.set_graph_id(this.id);             
     }
 
+    loescheKnoten(knoten){
+        const knotenid = knoten.id;
+        const knotenindex = this.knoten.indexOf(knotenid);
+
+        // Knoten unsichtbar machen
+        knoten.el.style.visibility = "hidden";
+
+        // Knoten aus der Liste loeschen
+        this.knoten.splice(knotenindex, 1);
+        
+        // Verbindungen loeschen
+        for(let zeile of this.kanten){
+            zeile.splice(knotenindex, 1);
+        }
+        
+        this.kanten.splice(knotenindex, 1);
+    }
+
     addConnection(nodexid, nodeyid, con){
         const knotenx = this.knoten.indexOf(nodexid);
         const knoteny = this.knoten.indexOf(nodeyid);
@@ -408,8 +428,11 @@ class Graph {
     zeichneVerbindungen(){
         let canvas = document.getElementById("myCanvas"); //
         let ctx = canvas.getContext("2d");
+    
 
         let verschiebung = 0;
+        let paragraphenhoehe = parseInt(document.getElementById("ausgabetest").clientHeight) + 16;
+
         // Einmalig bei der Etappenwechseln von einem Graphen
         if(graphenVerbindenZustand){
             const knoten = document.querySelectorAll(".draggable-el");
@@ -428,8 +451,6 @@ class Graph {
         }
 
         // Es wird nur ein Graph gezeichnet
-        // ctx.clearRect(0,0, canvas.width, canvas.height);
-
         for (let i=0; i<this.knoten.length; i++){
             for (let j=0; j<this.knoten.length; j++){
                 if(this.kanten[i][j] > 0){ // Ist diese Bedingung noch nötig?
@@ -448,8 +469,8 @@ class Graph {
                     const knoteny = Node.getByID(this.knoten[j]);
 
                     ctx.beginPath();
-                    ctx.moveTo(parseInt(knotenx.el.style.left) - verschiebung, parseInt(knotenx.el.style.top));
-                    ctx.lineTo(parseInt(knoteny.el.style.left) - verschiebung, parseInt(knoteny.el.style.top));
+                    ctx.moveTo(parseInt(knotenx.el.style.left) - verschiebung, parseInt(knotenx.el.style.top) - paragraphenhoehe);
+                    ctx.lineTo(parseInt(knoteny.el.style.left) - verschiebung, parseInt(knoteny.el.style.top) - paragraphenhoehe);
                     
                     ctx.stroke();
                 }
@@ -738,5 +759,14 @@ document.getElementById("btnNeuerKnoten").addEventListener('click', (event) => {
 document.getElementById("btnZeichneVerbindung").addEventListener('click', (event) => {
     zeichneVerbindung();
 })
+//===============================================================
+document.getElementById("knoteninfo").addEventListener('click', (event) => { 
+    // document.getElementById("knoteninfo").style.backgroundColor = "rgb(144, 238, 144)";
+    const aktiverKnoten = Node.aktiverKnoten;
+    
+    aktiverKnoten.showInfo();
+    document.getElementById("knoteninfo").style.backgroundColor = null;
+})
+
 
 
