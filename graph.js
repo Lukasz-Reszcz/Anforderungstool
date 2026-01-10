@@ -1,4 +1,5 @@
 import Node from "./node_class.js";
+import "./knotenMenue.js";
 
 // globale Variablen
 window.nodeMaxID = 0;
@@ -20,6 +21,8 @@ window.hauptgraph_1 = null;
 window.aktiverKnoten = null;
 
 class Graph {
+    static register = new Map();
+
     constructor(){
         graphMaxID += 1;
         this.id = graphMaxID;
@@ -27,9 +30,15 @@ class Graph {
         this.kanten = new Array();
         this.size = 0;
 
+        Graph.register.set(this.id, this);
+
         this.knoten_h = new Node("Knotenbezeichnung");
 
         this.addKnoten(this.knoten_h);
+    }
+
+    static getByID(id){
+        return Graph.register.get(id);
     }
 
     addKnoten(node){
@@ -144,6 +153,21 @@ class Graph {
             }
         }
     }
+
+    getVerbindung(id1, id2){
+        let indx1 = this.knoten.indexOf(id1);
+        let indx2 = this.knoten.indexOf(id2);
+
+        /*
+        if(indx1 > indx2){
+            const indxh = indx1;
+            indx1 = indx2;
+            indx2 = indxh;
+        }
+        */
+
+        return this.kanten[indx1][indx2];
+    }
 }
 
 function newNode(){
@@ -224,10 +248,10 @@ function newGraph(){
         hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
         hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
     }
-    else {
-        alert("Es sind bereits zwei Graphen vorhanden");
-        return;
-    }
+    // else {
+    //     alert("Es sind bereits zwei Graphen vorhanden");
+    //     return;
+    // }
 }
 
 let graphenVerbindenZustand = false;
@@ -331,10 +355,73 @@ function graphenVerbinden(){
     
 }
 
+function findeGemeinsamenTeilgraphen(){
+    const graph1 = hauptgraph;
+    const graph2 = Graph.getByID(2);
+    let gemeinsameKnoten = [];
+
+    console.log(graph2);
+
+    // Gemeinsame Knoten finden
+    for(let i=0; i < graph1.knoten.length; i++){
+        for(let j=0; j < graph2.knoten.length; j++){
+            const knoten1 = Node.getByID(graph1.knoten[i]);
+            const knoten2 = Node.getByID(graph2.knoten[j]);
+
+            if(knoten1.info === knoten2.info){
+                gemeinsameKnoten.push([knoten1, knoten2]);
+            }
+        }
+    }
+
+    // const knotentt = ergebnis[0][0];
+    // knotentt.el.style.backgroundColor = "red";
+    let teilgraph = new Graph();
+    //teilgraph.loescheKnoten(teilgraph.knoten_h);
+    let graphenMap = new Map();
+
+    for(let i=0; i<gemeinsameKnoten.length; i++){
+        const knoten = gemeinsameKnoten[i][0].clone();
+        knoten.el.style.backgroundColor = "yellow";
+        teilgraph.addKnoten(knoten);
+        graphenMap.set(gemeinsameKnoten[i][0].id, knoten.id);
+    }
+
+    for(let i=0; i<gemeinsameKnoten.length; i++){
+        for(let j=i+1; j<gemeinsameKnoten.length; j++){
+
+            console.log(i, j);
+            console.log(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id));
+            console.log(graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id));
+            
+
+            if(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id) === 
+               graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id)){             
+
+                teilgraph.addConnection(graphenMap.get(gemeinsameKnoten[i][0].id), 
+                    graphenMap.get(gemeinsameKnoten[j][0].id), 
+                    graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id))
+               }
+        }
+    }
+
+    teilgraph.loescheKnoten(teilgraph.knoten_h);
+    teilgraph.zeichneVerbindungen();
+
+    console.log(teilgraph);
+
+    return gemeinsameKnoten;
+}
+
 function zeichneVerbindung(){
-    leereVerbindungen()
-    hauptgraph.zeichneVerbindungen();
-    if(hauptgraph_1 != null)    hauptgraph_1.zeichneVerbindungen();
+    leereVerbindungen();
+
+    for(const graph of Graph.register){
+        graph[1].zeichneVerbindungen();
+    }
+
+    // hauptgraph.zeichneVerbindungen();
+    // if(hauptgraph_1 != null)    hauptgraph_1.zeichneVerbindungen();
 }
 
 // loesche Verbindung - verwirrend mit tatsächlichem Löschen
@@ -348,70 +435,6 @@ function leereVerbindungen(){
     ctx1.clearRect(0,0, canvas1.width, canvas1.height);
 }
 
-
-/*
-const myNode1 = new Node("Hauptknoten");
-myNode1.append("left", "Links");
-myNode1.append("left", "Links");
-myNode1.append("right", "Rechts");
-myNode1.left.append("left", "Unterlinks");
-myNode1.left.append("right", "Unterrechts");
-myNode1.right.append("left", "Wald");
-myNode1.right.append("right", "Blatt");
-
-myNode1.left.set_anforgerungsquelle("Dokumentenname.pdf");
-
-// console.log(myNode1.info + "\n" + myNode1.left.info + " " + myNode1.right.info);
-myNode1.print_graph();
-console.log("Found node: " + myNode1.search("Links"));
-console.log("Anforderungsquelle: " + myNode1.left.anforderungsquelle);
-*/
-
-// (Drag and drop)
-// https://www.youtube.com/watch?v=cNw0ySz79FI
-
-
-// code für draggable (ziehbar) Elementen
-
-const elements = document.getElementsByClassName("draggable-el");
-
-let isDragging = false;
-let lastX = 0;
-let lastY = 0;
-
-/*
-for(const element of elements){
-    element.addEventListener('mousedown', (event) => {
-        isDragging = true;
-        lastX = event.clientX;
-        lastY = event.clientY;
-        element.computedStyleMap.cursor = "grabbing";
-    })
-
-    element.addEventListener('mousemove', (event) =>{
-        if(!isDragging) return;
-
-        const deltaX = event.clientX - lastX;
-        const deltaY = event.clientY - lastY;
-
-        const elementX = parseInt(window.getComputedStyle(element).getPropertyValue('left'));
-        const elementY = parseInt(window.getComputedStyle(element).getPropertyValue('top'));
-    
-        element.style.left = `${elementX + deltaX}px`;
-        element.style.top = `${elementY + deltaY}px`;
-
-        lastX = event.clientX;
-        lastY = event.clientY;
-    })
-}
-
-document.addEventListener('mouseup', ()=>{
-    if(isDragging){
-        isDragging = false;
-        element.style.cursor = "grab";
-    }
-})
-*/
 //=========================================================
 // 
 document.getElementById("btnNeuerGraph").addEventListener('click', (event) => {
@@ -427,36 +450,8 @@ document.getElementById("btnZeichneVerbindung").addEventListener('click', (event
     zeichneVerbindung();
 })
 //===============================================================
-document.getElementById("knoteninfo").addEventListener('click', (event) => { 
-    // document.getElementById("knoteninfo").style.backgroundColor = "rgb(144, 238, 144)";
-    const aktiverKnoten = Node.aktiverKnoten;
-    
-    aktiverKnoten.showInfo();
-    document.getElementById("knoteninfo").style.backgroundColor = null;
+document.getElementById("TeilgraphenFinden").addEventListener('click', () => {
+    let res = findeGemeinsamenTeilgraphen();
+
+    console.log(res);
 })
-
-document.getElementById("knotenLoeschen").addEventListener('click', () => {
-    const aktiverKnoten = Node.aktiverKnoten;
-
-    if(aktiverKnoten.graph_id === 1){
-        hauptgraph.loescheKnoten(aktiverKnoten);
-    }
-
-    Node.aktiverKnoten = null;
-})
-
-document.getElementById("knotenVerbinden").addEventListener('click', () => {
-    const aktiverKnoten = Node.aktiverKnoten;
-
-    const msg = "Der Knopf verbinden wurde gedrückt, ID: " + aktiverKnoten.id;
-    document.getElementById("ausgabetest").textContent = msg;
-
-    Node.verbindungAktiv = true;
-})
-
-document.getElementById("knotenDesaktivieren").addEventListener('click', () => {
-    Node.aktiverKnoten.el.style.backgroundColor = null;
-    Node.aktiverKnoten = null;
-})
-
-

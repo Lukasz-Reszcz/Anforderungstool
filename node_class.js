@@ -43,6 +43,11 @@ export default class Node {
     static getByID(id){
         return Node.register.get(id);
     }
+
+    clone(){
+        // Weitere Infos kopieren
+        return new Node(this.info);
+    }
     
     append(direction, info){
     	if(direction == "left"){
