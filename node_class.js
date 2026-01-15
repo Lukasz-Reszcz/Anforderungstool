@@ -143,7 +143,7 @@ export default class Node {
         this.menuContainer.appendChild(this.menuOption_info);
         this.menuContainer.appendChild(this.menuOption_knotenloeschen);
         
-        this.el.appendChild(this.menuContainer);
+        // this.el.appendChild(this.menuContainer);
 
         graphContainer.appendChild(this.el);
     }
@@ -216,6 +216,8 @@ export default class Node {
                 Node.verbindenVon = Node.aktiverKnoten;
                 Node.aktiverKnoten = this;
 
+                const verbindungsart = parseInt(document.getElementById("verbindungsarten").value);
+
 
                 document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + this.id;
                             // verbinden->Menü->Knoten
@@ -268,7 +270,7 @@ export default class Node {
                     }
 
                     graphAktuell.addKnoten(knotenVon);
-                    graphAktuell.addConnection(verbindungVon, verbindungNach, 1);
+                    graphAktuell.addConnection(verbindungVon, verbindungNach, verbindungsart);
                 }
 
                 // leereVerbindungen();

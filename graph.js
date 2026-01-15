@@ -70,6 +70,32 @@ class Graph {
         gegebenKnoten.set_graph_id(this.id);             
     }
 
+    clone(){
+        let graphClone = new Graph();
+        let knotenMap = new Map();
+
+        // Knoten kopieren
+        for(const knoten of this.knoten){
+            let knotenClone = Node.getByID(knoten).clone();
+            graphClone.addKnoten(knotenClone);
+            knotenMap.set(knoten, knotenClone.id);
+        }
+
+        graphClone.loescheKnoten(graphClone.knoten_h);
+
+        console.log(graphClone);
+
+        // Verbindungen kopieren
+        for(let i=0; i<this.knoten.length; i++){
+            for(let j=0; j<this.knoten.length; j++){
+                graphClone.addConnection(knotenMap.get(this.knoten[i]), knotenMap.get(this.knoten[j]), 
+                    this.kanten[i][j]);
+            }
+        }
+
+        return graphClone;
+    }
+
     loescheKnoten(knoten){
         const knotenid = knoten.id;
         const knotenindex = this.knoten.indexOf(knotenid);
@@ -107,7 +133,8 @@ class Graph {
     
 
         let verschiebung = 0;
-        let paragraphenhoehe = parseInt(document.getElementById("ausgabetest").clientHeight) + 16;
+        let paragraphenhoehe = parseInt(document.getElementById("menue").clientHeight) + 
+            parseInt(document.getElementById("ausgabetest").clientHeight);
 
         // Einmalig bei der Etappenwechseln von einem Graphen
         if(graphenVerbindenZustand){
@@ -145,6 +172,7 @@ class Graph {
                     const knoteny = Node.getByID(this.knoten[j]);
 
                     ctx.beginPath();
+                    // Die Paragraphenhöhe anpassen
                     ctx.moveTo(parseInt(knotenx.el.style.left) - verschiebung, parseInt(knotenx.el.style.top) - paragraphenhoehe);
                     ctx.lineTo(parseInt(knoteny.el.style.left) - verschiebung, parseInt(knoteny.el.style.top) - paragraphenhoehe);
                     
@@ -177,12 +205,31 @@ function newNode(){
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
+function zeichneGraphenrauemenrahmen(){
+    const graphenraumbreite = canvas.width / 3;
+
+    for(let i=0; i<3; i++){
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.moveTo((i+1)*graphenraumbreite, 0);
+        ctx.lineTo((i+1)*graphenraumbreite, canvas.height);
+        ctx.stroke();
+    }
+    ctx.lineWidth = 1;
+}
+
 function setGraphenflaechen(){
     const canvas = document.getElementById("myCanvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = document.getElementById("nodec").clientWidth;
-    canvas.height = document.getElementById("nodec").clientHeight;
+    canvas.width = document.getElementById("hauptcontainer").clientWidth;
+    canvas.height = document.getElementById("hauptcontainer").clientHeight;
+
+    zeichneGraphenrauemenrahmen();
+
+    // canvas.width = document.getElementById("nodec").clientWidth;
+    // canvas.height = document.getElementById("nodec").clientHeight;
 
     const canvas1 = document.getElementById("myCanvasPlanung");
     // canvas1.getContext("2d");
@@ -352,7 +399,6 @@ function graphenVerbinden(){
         knot3.el.className = "draggable-el";
     }
     */
-    
 }
 
 function findeGemeinsamenTeilgraphen(){
@@ -394,34 +440,100 @@ function findeGemeinsamenTeilgraphen(){
             console.log(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id));
             console.log(graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id));
             
-
             if(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id) === 
                graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id)){             
 
                 teilgraph.addConnection(graphenMap.get(gemeinsameKnoten[i][0].id), 
                     graphenMap.get(gemeinsameKnoten[j][0].id), 
                     graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id))
-               }
+            }
         }
     }
 
     teilgraph.loescheKnoten(teilgraph.knoten_h);
+
+    // Den Knoten finden, der nur hierarchische Verbindungen hat
+    let hauptknotenGefunden = false;
+    let hauptknotenID = 0;
+    for(let i=0; i<teilgraph.knoten.length; i++){
+        for(let j=0; j<teilgraph.knoten.length; j++){
+            if(teilgraph.kanten[i][j] > 1){
+                break;
+            }
+            if(j === teilgraph.knoten.length-1){
+                hauptknotenGefunden = true;
+                hauptknotenID = teilgraph.knoten[i];
+            }
+        }
+        if(hauptknotenGefunden){
+            break;
+        }
+    }
+
+    // Prüfen, ob die Verbindungen zu dem Knoten rein- oder rausgehen
+    // Als eine Funktion schreiben
+    let verbindungsart1 = null;
+    let verbindungsart2 = null
+    for(const knoten1 of graph1.knoten){
+        if(Node.getByID(hauptknotenID).info === Node.getByID(knoten1).info){
+            hauptknotenID = knoten1;
+        }
+    }
+
+    const knotenPosition = graph1.knoten.indexOf(hauptknotenID);
+    for(let i=0; i<graph1.knoten.lenght; i++){
+        if(graph1.kanten[i][knotenPosition] >= 2){
+            verbindungsart1 = "rein";
+            break;
+        }
+    }
+
+    for(let i=0; i<graph1.knoten.lenght; i++){
+        if(graph1.kanten[knotenPosition][i] >= 2){
+            verbindungsart1 = "raus";
+            break;
+        }
+    }
+
+    for(const knoten2 of graph2.knoten){
+        if(Node.getByID(hauptknotenID).info === Node.getByID(knoten2).info){
+            hauptknotenID = knoten2;
+        }
+    }
+
+    const knotenPosition1 = graph2.knoten.indexOf(hauptknotenID);
+
+    for(let i=0; i<graph2.knoten.lenght; i++){
+        if(graph2.kanten[i][knotenPosition1] >= 2){
+            verbindungsart2 = "rein";
+            break;
+        }
+    }
+
+    for(let i=0; i<graph2.knoten.lenght; i++){
+        if(graph2.kanten[knotenPosition1][i] >= 2){
+            verbindungsart2 = "raus";
+            break;
+        }
+    }
+
+    console.log(verbindungsart1, verbindungsart2);
+    
+    
+
+
+
     teilgraph.zeichneVerbindungen();
-
-    console.log(teilgraph);
-
-    return gemeinsameKnoten;
 }
 
 function zeichneVerbindung(){
     leereVerbindungen();
 
+    zeichneGraphenrauemenrahmen();
+
     for(const graph of Graph.register){
         graph[1].zeichneVerbindungen();
     }
-
-    // hauptgraph.zeichneVerbindungen();
-    // if(hauptgraph_1 != null)    hauptgraph_1.zeichneVerbindungen();
 }
 
 // loesche Verbindung - verwirrend mit tatsächlichem Löschen
@@ -436,7 +548,6 @@ function leereVerbindungen(){
 }
 
 //=========================================================
-// 
 document.getElementById("btnNeuerGraph").addEventListener('click', (event) => {
     newGraph();
 })
@@ -454,4 +565,8 @@ document.getElementById("TeilgraphenFinden").addEventListener('click', () => {
     let res = findeGemeinsamenTeilgraphen();
 
     console.log(res);
+})
+
+document.getElementById("graphenKopieren").addEventListener('click', () => {
+    Graph.register.get(1).clone();
 })
