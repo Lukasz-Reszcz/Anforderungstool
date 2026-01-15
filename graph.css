@@ -54,5 +54,11 @@
 #verbinden{
     display: flex;
     align-items: center;
-    
+
+}
+
+td{
+    width: 33%;
+    border: 1px solid black;
+    text-align: center;
 }

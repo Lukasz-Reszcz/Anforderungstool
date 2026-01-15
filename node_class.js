@@ -253,11 +253,11 @@ export default class Node {
                 // const knotenVon = Node.getByID(verbindungVon);
                 if(hauptgraph.knoten.includes(verbindungVon)){
                     hauptgraph.addKnoten(knotenNach);
-                    hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
+                    hauptgraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
                 }
                 else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
                     hauptgraph_1.addKnoten(knotenNach);
-                    hauptgraph_1.addConnection(verbindungVon, verbindungNach, 1);
+                    hauptgraph_1.addConnection(verbindungVon, verbindungNach, verbindungsart);
                 }
                 // KnotenVon ist keinem Graphen zugewiesen
                 else{

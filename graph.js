@@ -29,6 +29,8 @@ class Graph {
         this.knoten = new Array();
         this.kanten = new Array();
         this.size = 0;
+        
+        this.phase = 1;
 
         Graph.register.set(this.id, this);
 
@@ -134,7 +136,8 @@ class Graph {
 
         let verschiebung = 0;
         let paragraphenhoehe = parseInt(document.getElementById("menue").clientHeight) + 
-            parseInt(document.getElementById("ausgabetest").clientHeight);
+            parseInt(document.getElementById("ausgabetest").clientHeight) +
+            parseInt(document.getElementById("ueberschriften").clientHeight);
 
         // Einmalig bei der Etappenwechseln von einem Graphen
         if(graphenVerbindenZustand){
@@ -267,9 +270,9 @@ function newGraph(){
 
         console.log(knoten1);
 
-        hauptgraph.addConnection(1, 2, 1);
-        hauptgraph.addConnection(1, 3, 1);
-        hauptgraph.addConnection(2, 3, 2);
+        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten1.id, 1);
+        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten2.id, 1);
+        hauptgraph.addConnection(knoten1.id, knoten2.id, 2);
     }
     else if (hauptgraph_1 == null){
         hauptgraph_1 = new Graph();
@@ -295,10 +298,9 @@ function newGraph(){
         hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
         hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
     }
-    // else {
-    //     alert("Es sind bereits zwei Graphen vorhanden");
-    //     return;
-    // }
+    else{
+        graph = new Graph();
+    }
 }
 
 let graphenVerbindenZustand = false;
@@ -331,6 +333,10 @@ function graphenVerbinden(){
     }
 
     if(verbindungGefunden){
+        //
+        let graph_kopie1 = graph1.clone();
+        let graph_kopie2 = graph2.clone();
+
         let knotenKopieG1 = new Node(Node.getByID(hauptgraph.knoten[wy]).info);
 
         console.log(knotenKopieG1);
@@ -360,11 +366,12 @@ function graphenVerbinden(){
                 continue;
             }
             Node.getByID(hauptgraph_1.knoten[i]).el.style.visibility = "hidden";
+            hauptgraph_1.loescheKnoten(hauptgraph_1.knoten[i]);
         }
         hauptgraph_1 = null;
 
         graphenVerbindenZustand = true;
-        modellEtappe = 2;
+        
         // Graphen neu zeichnen
         zeichneVerbindung();
         // graphenVerbindenZustand = false;
@@ -547,6 +554,34 @@ function leereVerbindungen(){
     ctx1.clearRect(0,0, canvas1.width, canvas1.height);
 }
 
+function findeUnteknoten(graphID, knotenID){
+    let unterknoten = [];
+
+    const graph = Graph.getByID(graphID);
+    const indxVon = graph.knoten.indexOf(knotenID);
+
+    for(let i=0; i<graph.knoten.length; i++){
+        if(graph.kanten[indxVon][i] > 0){
+            unterknoten.push(graph.knoten[i]);
+        }
+    }
+
+    for(const knoten of unterknoten){
+        return unterknoten.concat(findeUnteknoten(graphID, knoten));
+    }
+
+    return unterknoten;
+}
+
+function loescheUnterknoten(graphID, unterknoten){
+    const graph = Graph.getByID(graphID);
+    
+    let uk = new Set(unterknoten);
+    for(const knoten of uk){
+        graph.loescheKnoten(Node.getByID(knoten));
+    }
+}
+
 //=========================================================
 document.getElementById("btnNeuerGraph").addEventListener('click', (event) => {
     newGraph();
@@ -567,6 +602,17 @@ document.getElementById("TeilgraphenFinden").addEventListener('click', () => {
     console.log(res);
 })
 
-document.getElementById("graphenKopieren").addEventListener('click', () => {
-    Graph.register.get(1).clone();
+document.getElementById("knotenAutomatisieren").addEventListener('click', () => {
+    const graphid = Node.aktiverKnoten.graph_id;
+    const knotenid = Node.aktiverKnoten.id;
+
+    let uk = findeUnteknoten(graphid, knotenid);
+    loescheUnterknoten(graphid, uk);
 })
+
+document.getElementById("graphenKopieren").addEventListener('click', (event) => {
+    console.log(event);
+    Graph.register.get(Node.aktiverKnoten.graph_id).clone();
+})
+
+
