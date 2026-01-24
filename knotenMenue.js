@@ -27,6 +27,7 @@ document.getElementById("knotenVerbinden").addEventListener('click', () => {
     Node.verbindungAktiv = true;
 })
 
+// Noch nötig
 document.getElementById("knotenDesaktivieren").addEventListener('click', () => {
     Node.aktiverKnoten.el.style.backgroundColor = null;
     Node.aktiverKnoten = null;

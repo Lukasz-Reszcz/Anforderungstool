@@ -24,6 +24,8 @@ export default class Node {
         // Info
         this.info = info; //"Anforderung";  
         this.anforderungsquelle = null;
+        this.wurzelknoten = false;
+
 
         // DeKnoten
         this.make_knoten();
@@ -32,12 +34,10 @@ export default class Node {
         this.isDragging = false;
         this.activeElement = null;
 
-        // Menu
-        this.addMenu();
-        this.aktiveMenuOption = null;
-
         // aktiver Knoten
         this.make_aktiverKnoten();
+
+
     }
 
     static getByID(id){
@@ -109,7 +109,7 @@ export default class Node {
         this.el.className = "draggable-el";
         this.el.id = this.id;
 
-        const graphContainer = document.getElementById("nodec");
+        const graphContainer = document.getElementById("hauptcontainer");
         
         this.el.style.position = "absolute";
         this.el.style.left = "50px";
@@ -204,11 +204,17 @@ export default class Node {
                 knotenh[1].el.style.backgroundColor = null;
             }
 
+            // Die Auswahl zurücksetzen
+            if(this == Node.aktiverKnoten){
+                Node.aktiverKnoten = null;
+                return;
+            }
+
             if(!Node.verbindungAktiv){
                 Node.aktiverKnoten = this;
             }
 
-            this.el.style.backgroundColor = "rgb(60, 179, 113)";
+            this.el.style.backgroundColor = "#00e6e6";
 
             // Für verbinden mit
             if(Node.verbindungAktiv){
@@ -285,118 +291,6 @@ export default class Node {
                 verbindungKnotenHinzugefuegt = false;
             }
         })
-    }
-
-    // Funktionalitäten zum Munü
-    addMenu(){
-        this.el.addEventListener('contextmenu', (event) => {
-            event.preventDefault();
-            // event.currentTarget.classList.toggle("show");
-            // document.getElementById("menu").classList.toggle("show");
-
-            // # - ID
-            // .p - className
-            this.el.querySelector("#menu").classList.toggle("show");            
-        })
-
-        const menuOptions = this.el.querySelectorAll(".menuOption");
-        for(const mOpt of menuOptions){
-            mOpt.addEventListener('mousedown', (event) => {
-                if(mOpt.textContent == "verbinden"){
-                    if(verbindenAktiv){
-                        
-            
-                        // Verbindung
-                        verbindungNach = this.id;
-
-
-                        // Knoten aus verschiedenen Graphen
-                        // Keiner der Knoten gehört einem Graphen
-                        const knotenVon = Node.getByID(verbindungVon);
-                        const knotenNach = Node.getByID(verbindungNach);
-
-                        
-                        if(((knotenVon.graph_id !== 0 && knotenNach.graph_id !== 0) && 
-                                (knotenVon.graph_id != knotenNach.graph_id)) || 
-                            (knotenVon.graph_id === 0 && knotenNach.graph_id === 0)){
-                                alert("Die Verbindung kann nicht hergestellt werden");
-
-                                // reset
-                                verbinden_graph_id = null;
-                                verbindungVon = 0;
-                                verbindungNach = 0;
-                                verbindenAktiv = false;
-                                verbindungKnotenHinzugefuegt = false;
-                                
-                                return;
-                        }
-
-                        // Im welchen Graphen 
-                        // const knotenVon = Node.getByID(verbindungVon);
-                        if(hauptgraph.knoten.includes(verbindungVon)){
-                            hauptgraph.addKnoten(knotenNach);
-                            hauptgraph.addConnection(verbindungVon, verbindungNach, 1);
-                        }
-                        else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
-                            hauptgraph_1.addKnoten(knotenNach);
-                            hauptgraph_1.addConnection(verbindungVon, verbindungNach, 1);
-                        }
-                        // KnotenVon ist keinem Graphen zugewiesen
-                        else{
-                            let graphAktuell = knotenNach.graph_id;
-                            if(graphAktuell === 1){
-                                graphAktuell = hauptgraph;
-                            }
-                            else if(graphAktuell === 2){
-                                graphAktuell = hauptgraph_1;
-                            }
-
-                            graphAktuell.addKnoten(knotenVon);
-                            graphAktuell.addConnection(verbindungVon, verbindungNach, 1);
-                        }
-
-                        leereVerbindungen();
-                        hauptgraph.zeichneVerbindungen();
-                        if(hauptgraph_1 != null) hauptgraph_1.zeichneVerbindungen();
-
-                        // Reset von verbindungsvariablen
-                        verbinden_graph_id = null;
-                        verbindungVon = 0;
-                        verbindungNach = 0;
-                        verbindenAktiv = false;
-                        verbindungKnotenHinzugefuegt = false;
-                    }
-                    else {
-                        // const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
-                        const msg = "Der Knopf verbinden wurde gedrückt, ID: " + event.target.parentElement.parentElement.id;
-                        document.getElementById("ausgabetest").textContent = msg;
-
-                        // graphenIDVon
-                        verbinden_graph_id = this.graph_id;
-
-                        // VerbindungVon
-                        verbindungVon = this.id;
-
-                        // Zu dem Graphen anbinden
-                        // Im diesen Schritt ist noch nicht bekannt zu welchem Graphen der
-                        // Knoten angebindet werden soll
-                        // if (this.graph_id === 0){
-                        // }
-                        /*
-                        if(this.graph_id != 1){
-                            verbindungKnotenHinzugefuegt = 1;
-                            hauptgraph.addKnoten(this);
-
-                            console.log("Zu dem Graphen hinzugefügt\n" + this);
-                        }
-                        if(this.graph_id )
-                        */
-
-                        verbindenAktiv = true;
-                    }
-                }
-            })
-        }
     }
 
     showInfo(){

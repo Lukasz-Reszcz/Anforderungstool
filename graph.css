@@ -8,6 +8,16 @@
     border-radius: 20px;
 }
 
+.draggable-el-wurzelknoten {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #00cc69;
+    padding: 2px 5px;
+    cursor: grab;
+    border-radius: 20px;
+}
+
 .dropdown-content {
   display: none;
 }

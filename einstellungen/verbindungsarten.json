@@ -1,0 +1,7 @@
+{
+    "verbindungsarten":[
+        {"typ":"hierarchisch", "farbe":"blue"},
+        {"typ":"sequenz", "farbe":"lime"},
+        {"typ":"konkurrenz", "farbe":"red"}
+    ]
+}

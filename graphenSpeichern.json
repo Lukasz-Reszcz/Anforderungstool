@@ -1,0 +1,30 @@
+{
+    "knoten":[
+        {
+            "id":1,
+            "info":"Anforderung",
+            "pos_x":"100px",
+            "pos_y":"100px"
+        },
+        {
+            "id":2,
+            "info":"Aus einer Datei",
+            "pos_x":"200px",
+            "pos_y":"200px"
+        }
+    ],
+
+    "graphen":[
+        {
+            "id":1,
+            "knoten":[1,2],
+            "kanten":[
+                {
+                    "von":1,
+                    "nach":2,
+                    "typ":1
+                }
+            ]
+        }
+    ]
+}

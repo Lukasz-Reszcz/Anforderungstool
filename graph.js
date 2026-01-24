@@ -20,6 +20,9 @@ window.hauptgraph_1 = null;
 
 window.aktiverKnoten = null;
 
+// Verbindungsoptionen
+window.optionnummer = 3;
+
 class Graph {
     static register = new Map();
 
@@ -35,6 +38,7 @@ class Graph {
         Graph.register.set(this.id, this);
 
         this.knoten_h = new Node("Knotenbezeichnung");
+        this.knoten_h.el.className = "draggable-el-wurzelknoten";
 
         this.addKnoten(this.knoten_h);
     }
@@ -156,20 +160,20 @@ class Graph {
             ctx = canvas.getContext("2d");
         }
 
+        // Einstellungen bzgl. Verbindungsarten von einer json-Datei lesen
+        let jsonObj = localStorage.getItem("einstellungen");
+        
+        let obj = JSON.parse(jsonObj);
+
+        console.log(obj);
+
         // Es wird nur ein Graph gezeichnet
         for (let i=0; i<this.knoten.length; i++){
             for (let j=0; j<this.knoten.length; j++){
                 if(this.kanten[i][j] > 0){ // Ist diese Bedingung noch nötig?
                     // If in effizientere Struktur umwandeln, wie z.B. switch
-                    if(this.kanten[i][j] === 1){
-                        ctx.strokeStyle = "blue";
-                    }
-                    if(this.kanten[i][j] === 2){
-                        ctx.strokeStyle = "lime";
-                    }
-                    if(this.kanten[i][j] === 3){
-                        ctx.strokeStyle = "red";
-                    }
+                    
+                    ctx.strokeStyle = obj.verbindungsarten[this.kanten[i][j]-1].farbe;
 
                     const knotenx = Node.getByID(this.knoten[i]);
                     const knoteny = Node.getByID(this.knoten[j]);
@@ -230,20 +234,6 @@ function setGraphenflaechen(){
     canvas.height = document.getElementById("hauptcontainer").clientHeight;
 
     zeichneGraphenrauemenrahmen();
-
-    // canvas.width = document.getElementById("nodec").clientWidth;
-    // canvas.height = document.getElementById("nodec").clientHeight;
-
-    const canvas1 = document.getElementById("myCanvasPlanung");
-    // canvas1.getContext("2d");
-    canvas1.width = document.getElementById("planung").clientWidth;
-    canvas1.height = document.getElementById("planung").clientHeight;
-
-    const canvas2 = document.getElementById("myCanvasPlanungSoll");
-    // canvas2.getContext("2d");
-    canvas2.width = document.getElementById("soll-modell").clientWidth;
-    canvas2.height = document.getElementById("soll-modell").clientHeight;
-
 }
 
 setGraphenflaechen();
@@ -546,12 +536,7 @@ function zeichneVerbindung(){
 // loesche Verbindung - verwirrend mit tatsächlichem Löschen
 // leere von leeren
 function leereVerbindungen(){
-    // Später mit for-Schleife umsetzen
     ctx.clearRect(0,0, canvas.width, canvas.height);
-
-    const canvas1 = document.getElementById('myCanvasPlanung');
-    let ctx1 = canvas1.getContext('2d');
-    ctx1.clearRect(0,0, canvas1.width, canvas1.height);
 }
 
 function findeUnteknoten(graphID, knotenID){
@@ -615,4 +600,49 @@ document.getElementById("graphenKopieren").addEventListener('click', (event) => 
     Graph.register.get(Node.aktiverKnoten.graph_id).clone();
 })
 
+document.getElementById("verbindungsarten").addEventListener("click", () => {
+    //------------
+    let sel = document.getElementById("verbindungsarten");
+    let option = document.createElement("option");
+    option.text = localStorage.getItem("option");
+    
+    if(sel.options[window.optionnummer-1].text != option.text){
+        window.optionnummer++;
+        option.value = window.optionnummer;
+    
+        sel.add(option);
+    }
+    //------------------
+})
+
+document.getElementById("graphenLaden").addEventListener("click", async () => {
+    let graphenDatei = document.getElementById("graphenDatei").files[0];
+
+    let graphJSON = await graphenDatei.text();
+
+    graphJSON = JSON.parse(graphJSON);
+
+    console.log(graphJSON);
+
+    for(let i=0; i<graphJSON.knoten.length; i++){
+        let knoten = new Node(graphJSON.knoten[i].info);
+        knoten.el.style.left = graphJSON.knoten[i].pos_x;
+        knoten.el.style.top = graphJSON.knoten[i].pos_y;
+    }
+
+    for(let i=0; i<graphJSON.graphen.length; i++){
+        let graph = new Graph();
+        graph.loescheKnoten(graph.knoten_h);
+        for(const graphen_knoten of graphJSON.graphen[i].knoten){
+            console.log(graphen_knoten);
+            graph.addKnoten(graphen_knoten);
+        }
+
+        for(const graphen_kanten of graphJSON.graphen[i].kanten){
+            console.log(graphen_kanten);
+            graph.addConnection(graphen_kanten.von, graphen_kanten.nach, graphen_kanten.typ);
+        }
+    }
+    // Einen Knoten erstellen
+})
 
