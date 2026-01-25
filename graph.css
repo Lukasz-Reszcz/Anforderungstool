@@ -18,8 +18,14 @@
     border-radius: 20px;
 }
 
-.dropdown-content {
-  display: none;
+.draggable-el-freierKnoten {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #3399ff;
+    padding: 2px 5px;
+    cursor: grab;
+    border-radius: 20px;
 }
 
 .show {

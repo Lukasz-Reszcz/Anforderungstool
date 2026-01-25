@@ -1,3 +1,5 @@
+import {zeichneVerbindung} from "./graph.js";
+
 let lastX = 0;
 let lastY = 0;
 
@@ -26,6 +28,12 @@ export default class Node {
         this.anforderungsquelle = null;
         this.wurzelknoten = false;
 
+        // Der Stand
+        // Ist-Konstrekt - 1
+        // Ist-Abstrakt - 2
+        // Soll-Abstrakt -3
+        this.stand = 1;
+
 
         // DeKnoten
         this.make_knoten();
@@ -36,8 +44,6 @@ export default class Node {
 
         // aktiver Knoten
         this.make_aktiverKnoten();
-
-
     }
 
     static getByID(id){
@@ -65,15 +71,9 @@ export default class Node {
     set_info(info){
         this.info = info;
     }
-    
-    print_graph(){
-        console.log(this.id + " " + this.info);
-        if(this.left != null){
-            this.left.print_graph();
-        }
-        if(this.right != null){
-            this.right.print_graph();
-        }
+
+    set_anforgerungsquelle(aquelle){
+        this.anforderungsquelle = aquelle;
     }
 
     search(text){
@@ -99,10 +99,6 @@ export default class Node {
         return -1;
     }
 
-    set_anforgerungsquelle(aquelle){
-        this.anforderungsquelle = aquelle;
-    }
-
     make_knoten(){
         // Den Knoten auf einer Stelle setzen (oben links)
         this.el = document.createElement("div");
@@ -117,33 +113,8 @@ export default class Node {
 
         // Änderbares Textfeld
         this.par = document.createElement("p");
-        this.par.contentEditable = true;
         this.par.textContent = this.info;
         this.el.appendChild(this.par);
-
-        // Menü
-        this.menuContainer = document.createElement("div");
-        this.menuContainer.id = "menu";
-        this.menuContainer.className = "dropdown-content";
-
-        // make a menu options
-        this.menuOption = document.createElement("a");
-        this.menuOption.className = "menuOption";
-        this.menuOption.textContent = "verbinden";
-
-        this.menuOption_info = document.createElement("a");
-        this.menuOption_info.className = "menuOption";
-        this.menuOption_info.textContent = "Knoteninfo";
-
-        this.menuOption_knotenloeschen = document.createElement("a");
-        this.menuOption_knotenloeschen.className = "menuOption";
-        this.menuOption_knotenloeschen.textContent = "Knoten löschen";
-        
-        this.menuContainer.appendChild(this.menuOption);
-        this.menuContainer.appendChild(this.menuOption_info);
-        this.menuContainer.appendChild(this.menuOption_knotenloeschen);
-        
-        // this.el.appendChild(this.menuContainer);
 
         graphContainer.appendChild(this.el);
     }
@@ -176,6 +147,12 @@ export default class Node {
                 return;
             }
 
+            // Die Rahmen des zuständigen Bereiches nicht überschreiten
+            const breite = document.getElementById("myCanvas").clientWidth/3;
+            if(event.clientX >= this.stand*breite || event.clientX <= (this.stand-1)*breite){
+                return;
+            }
+
             // Die Kanten von den Boxen erreicht
             // Zustand hinzufügen
             // const graphDiv = document.getElementById('nodec');
@@ -194,6 +171,10 @@ export default class Node {
 
             lastX = event.clientX;
             lastY = event.clientY;
+
+
+            // Debug
+            zeichneVerbindung()
         })
     }
 
@@ -260,10 +241,15 @@ export default class Node {
                 if(hauptgraph.knoten.includes(verbindungVon)){
                     hauptgraph.addKnoten(knotenNach);
                     hauptgraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
+
+                    knotenNach.el.className = "draggable-el";
+
                 }
                 else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
                     hauptgraph_1.addKnoten(knotenNach);
                     hauptgraph_1.addConnection(verbindungVon, verbindungNach, verbindungsart);
+
+                    knotenNach.el.className = "draggable-el";
                 }
                 // KnotenVon ist keinem Graphen zugewiesen
                 else{
@@ -277,7 +263,12 @@ export default class Node {
 
                     graphAktuell.addKnoten(knotenVon);
                     graphAktuell.addConnection(verbindungVon, verbindungNach, verbindungsart);
+
+                    knotenVon.el.className = "draggable-el";
                 }
+
+                // verbindung zeichnen
+                zeichneVerbindung();
 
                 // leereVerbindungen();
                 // hauptgraph.zeichneVerbindungen();
@@ -295,9 +286,9 @@ export default class Node {
 
     showInfo(){
         let infoString = "GraphID: " + this.graph_id +
-                        "KnotenID: " + this.id + 
-                        "Anforderung: " + this.info +
-                        "Quelle: " + this.anforderungsquelle;
+                        "\nKnotenID: " + this.id + 
+                        "\nAnforderung: " + this.info +
+                        "\nQuelle: " + this.anforderungsquelle;
         alert(infoString);
     }
 
