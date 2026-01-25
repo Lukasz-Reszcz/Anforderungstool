@@ -14,8 +14,10 @@ export default class Graph {
 
         Graph.register.set(this.id, this);
 
+        // Als Wurzelknoten kennzeichnen
         this.knoten_h = new Node("Knotenbezeichnung");
         this.knoten_h.el.className = "draggable-el-wurzelknoten";
+        this.knoten_h.wurzelknoten = true;
 
         this.addKnoten(this.knoten_h);
     }
@@ -82,6 +84,7 @@ export default class Graph {
     loescheKnoten(knoten){
         const knotenid = knoten.id;
         const knotenindex = this.knoten.indexOf(knotenid);
+        this.size--;
 
         // Knoten unsichtbar machen
         knoten.el.style.visibility = "hidden";
@@ -95,6 +98,11 @@ export default class Graph {
         }
         
         this.kanten.splice(knotenindex, 1);
+
+
+        // Debug
+        console.log(this);
+
     }
 
     addConnection(nodexid, nodeyid, con){

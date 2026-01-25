@@ -495,4 +495,6 @@ function graphenVerschieben(stand){
             knoten[1].el.style.left = `${parseInt(knoten[1].el.style.left) + breite}px`;
         }
     }
+
+    zeichneVerbindung();
 }
