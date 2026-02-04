@@ -19,19 +19,19 @@ export default class Graph {
         this.knoten_h.el.className = "draggable-el-wurzelknoten";
         this.knoten_h.wurzelknoten = true;
 
-        this.addKnoten(this.knoten_h);
+        this.addKnoten(this.knoten_h.id);
     }
 
     static getByID(id){
         return Graph.register.get(id);
     }
 
-    addKnoten(node){
+    addKnoten(nodeID){
         // Die Menge der Knoten
-        if(this.knoten.includes(node.id)){
+        if(this.knoten.includes(nodeID)){
             return;
         }
-        this.knoten.push(node.id);
+        this.knoten.push(nodeID);
 
         // Kanten
         this.size++;
@@ -51,7 +51,7 @@ export default class Graph {
 
         // Knoten mit dem Graphen verbinden
         // node.graph_id = this.id;
-        let gegebenKnoten = Node.getByID(node.id);
+        let gegebenKnoten = Node.getByID(nodeID);
         gegebenKnoten.set_graph_id(this.id);             
     }
 
@@ -62,7 +62,7 @@ export default class Graph {
         // Knoten kopieren
         for(const knoten of this.knoten){
             let knotenClone = Node.getByID(knoten).clone();
-            graphClone.addKnoten(knotenClone);
+            graphClone.addKnoten(knotenClone.id);
             knotenMap.set(knoten, knotenClone.id);
         }
 

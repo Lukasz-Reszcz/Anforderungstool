@@ -77,8 +77,8 @@ function newGraph(){
         knoten2.el.style.left = "200px";
         knoten2.el.style.top = "200px";
 
-        hauptgraph.addKnoten(knoten1);
-        hauptgraph.addKnoten(knoten2);
+        hauptgraph.addKnoten(knoten1.id);
+        hauptgraph.addKnoten(knoten2.id);
 
         console.log(knoten1);
 
@@ -90,11 +90,11 @@ function newGraph(){
         hauptgraph_1 = new Graph();
 
         const knoten2 = new Node("Anforderung");
-        hauptgraph_1.addKnoten(knoten2);
+        hauptgraph_1.addKnoten(knoten2.id);
         hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
 
         const knoten12 = new Node("Neuer Graph");
-        hauptgraph_1.addKnoten(knoten12);
+        hauptgraph_1.addKnoten(knoten12.id);
 
         // Richtig platzieren
         hauptgraph_1.knoten_h.el.style.top = "50px";
@@ -159,14 +159,14 @@ function graphenVerbinden(){
 
         // Testmäßig - später Verändern
         abstraktKnoten.par.textContent = abstraktKnoten.text;
-        hauptgraph.addKnoten(knotenKopieG1);
+        hauptgraph.addKnoten(knotenKopieG1.id);
 
 
         let knotenKopieG2 = Node.getByID(hauptgraph_1.knoten[wy]);
         knotenKopieG2.set_graph_id(0);
         hauptgraph_1.knoten
 
-        hauptgraph.addKnoten(knotenKopieG2); // Wie verhält sich die ID?
+        hauptgraph.addKnoten(knotenKopieG2.id); // Wie verhält sich die ID?
 
         hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG1.id, 1);
         hauptgraph.addConnection(abstraktKnoten.id, knotenKopieG2.id, 1);
@@ -248,7 +248,7 @@ function findeGemeinsamenTeilgraphen(){
     for(let i=0; i<gemeinsameKnoten.length; i++){
         const knoten = gemeinsameKnoten[i][0].clone();
         knoten.el.style.backgroundColor = "yellow";
-        teilgraph.addKnoten(knoten);
+        teilgraph.addKnoten(knoten.id);
         graphenMap.set(gemeinsameKnoten[i][0].id, knoten.id);
     }
 
@@ -368,7 +368,7 @@ function findeUnteknoten(graphID, knotenID){
     const indxVon = graph.knoten.indexOf(knotenID);
 
     for(let i=0; i<graph.knoten.length; i++){
-        if(graph.kanten[indxVon][i] > 0){
+        if(graph.kanten[indxVon][i] > 0 && !unterknoten.includes(graph.knoten[i])){
             unterknoten.push(graph.knoten[i]);
         }
     }
@@ -401,14 +401,6 @@ document.getElementById("btnNeuerKnoten").addEventListener('click', (event) => {
 })
 document.getElementById("btnZeichneVerbindung").addEventListener('click', (event) => {
     zeichneVerbindung();
-})
-
-document.getElementById("verbunden").addEventListener("onchange", () => {
-    alert("Hola");
-    if(document.getElementById("verbunden").textContent === "verbunden"){
-        zeichneVerbindung();
-        document.getElementById("verbunden").textContent = null;
-    }
 })
 
 //===============================================================
@@ -464,17 +456,29 @@ document.getElementById("graphenLaden").addEventListener("click", async () => {
     for(let i=0; i<graphJSON.graphen.length; i++){
         let graph = new Graph();
         graph.loescheKnoten(graph.knoten_h);
-        for(const graphen_knoten of graphJSON.graphen[i].knoten){
-            console.log(graphen_knoten);
-            graph.addKnoten(graphen_knoten);
+
+        for(let j=0; j<graphJSON.graphen[i].knoten.length; j++){
+            graph.addKnoten(graphJSON.graphen[i].knoten[j]);
         }
 
-        for(const graphen_kanten of graphJSON.graphen[i].kanten){
-            console.log(graphen_kanten);
+        for(let j=0; j<graphJSON.graphen[i].kanten.length; j++){
+            console.log(graphJSON.graphen[i].kanten[j]);
+            const graphen_kanten = graphJSON.graphen[i].kanten[j];
             graph.addConnection(graphen_kanten.von, graphen_kanten.nach, graphen_kanten.typ);
         }
     }
-    // Einen Knoten erstellen
+    // Klasse ändern
+    for(let i=0; i<graphJSON.knoten.length; i++){
+            let knoten = Node.getByID(graphJSON.knoten[i].id);
+            if(knoten.graph_id == 0)    
+                knoten.el.className = "draggable-el-freierKnoten";
+
+            if(graphJSON.knoten[i].wurzelknoten == 1){
+                Node.getByID(graphJSON.knoten[i].id).el.className = "draggable-el-wurzelknoten";
+            }
+
+    }
+    
 })
 
 document.getElementById("nachIstAbstrakt").addEventListener("click", () => {
@@ -498,3 +502,41 @@ function graphenVerschieben(stand){
 
     zeichneVerbindung();
 }
+//----
+document.getElementById("knotengleichungErstellen").addEventListener("click", () => {
+    const aktiverKnoten = Node.aktiverKnoten;
+    const graph = Graph.getByID(aktiverKnoten.graph_id);
+
+    // Wenn der Knoten keinem Graphen gehört, dann beenden
+    if(aktiverKnoten.graph_id == 0) return;
+
+    // Unterknoten bestimmen
+    let unterknoten = [];
+    let indx = graph.knoten.indexOf(aktiverKnoten.id);
+
+    for(let i=0; i<graph.knoten.length; i++){
+        if(graph.kanten[indx][i] == 1){
+            unterknoten.push(i);
+        }
+    }
+
+    // verbindung
+    let verbindung = 0;
+    if(graph.kanten[unterknoten[0]][unterknoten[1]] > 0)
+        verbindung = graph.kanten[unterknoten[0]][unterknoten[1]];
+    if(graph.kanten[unterknoten[1]][unterknoten[0]] > 0)
+        verbindung = graph.kanten[unterknoten[1]][unterknoten[0]];
+
+    const mapVerbindung = {
+        2: ">>",
+        3: "[]",
+        4: "|||"
+    }
+
+    let gleichung = Node.getByID(graph.knoten[unterknoten[0]]).info + " " + mapVerbindung[verbindung] + " " + 
+        Node.getByID(graph.knoten[unterknoten[1]]).info;
+
+    aktiverKnoten.parGleichung.textContent = gleichung;
+
+
+})

@@ -4,25 +4,37 @@
             "id":1,
             "info":"Anforderung",
             "pos_x":"100px",
-            "pos_y":"100px"
+            "pos_y":"100px",
+            "wurzelknoten":1
         },
         {
             "id":2,
             "info":"Aus einer Datei",
             "pos_x":"200px",
             "pos_y":"200px"
+        },
+        {
+            "id":3,
+            "info":"Der dritte Knoten",
+            "pos_x":"300px",
+            "pos_y":"300px"
         }
     ],
 
     "graphen":[
         {
             "id":1,
-            "knoten":[1,2],
+            "knoten":[1,2,3],
             "kanten":[
                 {
                     "von":1,
                     "nach":2,
                     "typ":1
+                },
+                {
+                    "von":1,
+                    "nach":3,
+                    "typ":2
                 }
             ]
         }

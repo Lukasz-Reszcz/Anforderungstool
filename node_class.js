@@ -111,10 +111,13 @@ export default class Node {
         this.el.style.left = "50px";
         this.el.style.top = "50px"; 
 
-        // Änderbares Textfeld
+        // Textfeld
         this.par = document.createElement("p");
         this.par.textContent = this.info;
         this.el.appendChild(this.par);
+
+        this.parGleichung = document.createElement("p");
+        this.el.appendChild(this.parGleichung);
 
         graphContainer.appendChild(this.el);
     }
@@ -239,14 +242,14 @@ export default class Node {
                 // Im welchen Graphen 
                 // const knotenVon = Node.getByID(verbindungVon);
                 if(hauptgraph.knoten.includes(verbindungVon)){
-                    hauptgraph.addKnoten(knotenNach);
+                    hauptgraph.addKnoten(knotenNach.id);
                     hauptgraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
 
                     knotenNach.el.className = "draggable-el";
 
                 }
                 else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
-                    hauptgraph_1.addKnoten(knotenNach);
+                    hauptgraph_1.addKnoten(knotenNach.id);
                     hauptgraph_1.addConnection(verbindungVon, verbindungNach, verbindungsart);
 
                     knotenNach.el.className = "draggable-el";
@@ -261,7 +264,7 @@ export default class Node {
                         graphAktuell = hauptgraph_1;
                     }
 
-                    graphAktuell.addKnoten(knotenVon);
+                    graphAktuell.addKnoten(knotenVon.id);
                     graphAktuell.addConnection(verbindungVon, verbindungNach, verbindungsart);
 
                     knotenVon.el.className = "draggable-el";
