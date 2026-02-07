@@ -78,3 +78,28 @@ td{
     border: 1px solid black;
     text-align: center;
 }
+
+.menue{
+    position: relative;
+    display: inline-block;
+}
+
+.menueOptions{
+    display: none;
+    position: absolute;
+}
+
+.menue p:hover{
+    display: block;
+    background-color: #444;
+}
+
+.menue:hover .menueOptions{
+    display: block;
+}
+
+.menuOptions p{
+    display: block;
+    margin: 0;
+    padding: 8px 15px;
+}

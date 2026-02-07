@@ -24,12 +24,10 @@ window.aktiverKnoten = null;
 // Verbindungsoptionen
 window.optionnummer = 3;
 
+// aktuelle kopfzeile ()
+window.aktuelleKopfzeileID = "istKnonkret";
+document.getElementById("istKonkret").style.backgroundColor = "#00FFFF";
 
-function newNode(){
-    let knoten = new Node("Test");
-    knoten.el.className = "draggable-el-freierKnoten";
-
-}
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -390,16 +388,45 @@ function loescheUnterknoten(graphID, unterknoten){
 }
 
 //=========================================================
-document.getElementById("btnNeuerGraph").addEventListener('click', (event) => {
+document.getElementById("neuerGraph").addEventListener('click', (event) => {
     newGraph();
 })
-document.getElementById("btnGraphenVerbinden").addEventListener('click', (event) => {
+document.getElementById("graphenVerbinden").addEventListener('click', (event) => {
     graphenVerbinden();
 })
-document.getElementById("btnNeuerKnoten").addEventListener('click', (event) => {
-    newNode();
-})
-document.getElementById("btnZeichneVerbindung").addEventListener('click', (event) => {
+document.getElementById("neuerKnoten").addEventListener('click', (event) => {
+    let knoten = new Node("Test");
+    knoten.el.className = "draggable-el-freierKnoten";
+
+    //Knotenposition anhand der Tabelle bestimmen
+    const rect = document.getElementById("myCanvas").getBoundingClientRect();
+
+    let pos_x = parseInt(rect.left);
+    let pos_y = parseInt(rect.top);
+    let breite = parseInt(document.getElementById("myCanvas").clientWidth/3);
+
+    console.log(pos_x);
+    console.log(pos_y);
+    console.log(breite);
+    
+
+    if(window.aktuelleKopfzeileID == "istAbstrakt")
+        pos_x += breite;
+    else if(window.aktuelleKopfzeileID == "sollAbstrakt")
+        pos_x += 2*breite;
+
+    pos_x += 50;
+    pos_y += 50;
+
+    knoten.el.style.left = pos_x + "px";
+    knoten.el.style.top = pos_y + "px";
+
+        
+
+
+});
+
+document.getElementById("zeichneVerbindung").addEventListener('click', (event) => {
     zeichneVerbindung();
 })
 
@@ -537,6 +564,15 @@ document.getElementById("knotengleichungErstellen").addEventListener("click", ()
         Node.getByID(graph.knoten[unterknoten[1]]).info;
 
     aktiverKnoten.parGleichung.textContent = gleichung;
+})
 
+document.getElementById("ueberschriften").addEventListener("dblclick", (event) => {
+    // Reset
+    document.getElementById("istKonkret").style.backgroundColor = null;
+    document.getElementById("istAbstrakt").style.backgroundColor = null;
+    document.getElementById("sollAbstrakt").style.backgroundColor = null;
+
+    document.getElementById(event.target.id).style.backgroundColor = "#00FFFF";
+    window.aktuelleKopfzeileID = event.target.id;
 
 })

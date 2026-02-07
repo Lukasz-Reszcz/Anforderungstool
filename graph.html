@@ -8,28 +8,63 @@
 </head>
 <body>
     <div id="menue">
-        <button id="btnNeuerKnoten"> Neuer Knoten</button> 
-        <button id="btnNeuerGraph"> Neuer Graph </button>
-        <button id="btnGraphenVerbinden"> Graphen verbinden </button>
-        <button id="btnZeichneVerbindung">verbindung Zeichnen</button>
-        <button id="btnZeichneTestGraphen">Testgraphen zeichnen</button>
+        <div class="menue">
+            <p class="hauptoption">Allgemeine Optionen</p>
+            <div class="menueOptions" style="margin-bottom: 0px;">
+                <p>Eine Option</p>
+                <p>Eine zweite Option</p>
+            </div>
+        </div>
+        <div class="menue">
+            <p class="hauptoption">Aufgabenoptionen</p>
+            <div class="menueOptions" style="margin-bottom: 0px;">
+                <p id="neuerKnoten" class="knotenOpt">Knoten erstellen</p>
+                <p id="knoteninfo" class="knotenOpt">Knoteninfo</p>
+                <p id="knotenLoeschen" class="knotenOpt">Knoten löschen</p> 
+                <p id="knotenNamenAendern" class="knotenOpt">Anforgerungsname ändern</p>
+                <p id="TeilgraphenFinden" class="knotenOpt">Teilgraphen finden</p>
+                <p id="graphenKopieren" class="knotenOpt">Graphen Kopieren</p>
+                <p id="knotenAutomatisieren" class="knotenOpt">Knoten automatisieren</p>
+                <p id="quelleHinzufuegen" class="knotenOpt">Quelle hinzufügen</p>
 
-        <div id="knotenOptionen">
-        <p id="knoteninfo" class="knotenOpt">Knoteninfo</p>
-        <p id="knotenLoeschen" class="knotenOpt">Knoten löschen</p> 
-        <p id="knotenNamenAendern" class="knotenOpt">Anforgerungsname ändern</p>
-        <p id="TeilgraphenFinden" class="knotenOpt">Teilgraphen finden</p>
-        <p id="graphenKopieren" class="knotenOpt">Graphen Kopieren</p>
-        <p id="knotenAutomatisieren" class="knotenOpt">Knoten automatisieren</p>
-        <p id="quelleHinzufuegen" class="knotenOpt">Quelle hinzufügen</p>
-
-        <p id="knotengleichungErstellen" class="knotenOpt">knotengleichung erstellen (Testfunktion)</p>
+                <p id="knotengleichungErstellen" class="knotenOpt">knotengleichung erstellen (Testfunktion)</p>
+            </div>
         </div>
 
-        <div>
-            <p id="nachIstAbstrakt">nach Ist-Abstrakt</p>
-            <p id="nachSollAbstrakt">nach Soll-Abstrakt</p>
+        <div class="menue">
+            <p class="hauptoption">Aufgabenmodell</p>
+
+            <div class="menueOptions">
+                <p id="neuerGraph">Neuer Graph</p>
+                <p id="graphenVerbinden">Graphen verbinden</p>
+                <p id="zeichneVerbindung">verbindung Zeichnen</p>
+                <p id="zeichneTestGraphen">Testgraphen zeichnen</p>
+                <p id="nachIstAbstrakt">nach Ist-Abstrakt</p>
+                <p id="nachSollAbstrakt">nach Soll-Abstrakt</p>
+            </div>
         </div>
+
+        <div class="menue">
+            <p class="hauptoption">Verbindung</p>
+
+            <div class="menueOptions">
+                <p></p>
+            </div>
+        </div>
+
+        <div class="menue">
+            <p class="hauptoption">Andere</p>
+
+            <div class="menueOptions">
+                <p></p>
+            </div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        
 
         <div id="verbinden">
             <p id="knotenVerbinden" class="knotenOpt" style="width: 100px;">Verbinden</p>
@@ -43,14 +78,16 @@
         </div>
     </div>
 
+
+
     <p id="ausgabetest">###</p>
     
     <div id="hauptcontainer" class="hauptcontainer">
         <table id="ueberschriften" style="width:100%">
             <tr>
-                <td>Ist-Konkret</td>
-                <td>Ist-Abstrakt</td>
-                <td>Soll-Abstrakt</td>
+                <td id="istKonkret">Ist-Konkret</td>
+                <td id="istAbstrakt">Ist-Abstrakt</td>
+                <td id="sollAbstrakt">Soll-Abstrakt</td>
             </tr>
         </table>
 
