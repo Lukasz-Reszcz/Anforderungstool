@@ -421,9 +421,12 @@ document.getElementById("neuerKnoten").addEventListener('click', (event) => {
     knoten.el.style.left = pos_x + "px";
     knoten.el.style.top = pos_y + "px";
 
-        
-
-
+    // Den Stand (Entwicklungsphase) ändern
+    if(window.aktuelleKopfzeileID == "istAbstrakt")
+            knoten.stand = 2;
+    if(window.aktuelleKopfzeileID == "sollAbstrakt")
+            knoten.stand = 3;
+    
 });
 
 document.getElementById("zeichneVerbindung").addEventListener('click', (event) => {
@@ -509,17 +512,28 @@ document.getElementById("graphenLaden").addEventListener("click", async () => {
 })
 
 document.getElementById("nachIstAbstrakt").addEventListener("click", () => {
-    graphenVerschieben(1);
+    const graphID = Node.aktiverKnoten.graph_id;
+    graphenVerschieben(1, graphID);
 });
 document.getElementById("nachSollAbstrakt").addEventListener("click", () => {
-    graphenVerschieben(2);
+    const graphID = Node.aktiverKnoten.graph_id;
+    graphenVerschieben(2, graphID);
 });
 
 
-function graphenVerschieben(stand){
+function graphenVerschieben(stand, graphID){
     let breite = document.getElementById("myCanvas").clientWidth/3;
 
+    let knoten = Node.aktiverKnoten;
+
+    if(graphID == 0 && knoten.stand == stand){
+        knoten.el.style.left = `${parseInt(knoten.el.style.left) + breite}px`;
+        knoten.stand++;
+        return;
+    }
+
     for(let knoten of Node.register){
+        if(knoten[1].graph_id != graphID || knoten[1].graph_id == 0)   continue;
         if(knoten[1].stand == stand){
             knoten[1].stand++;
             if(knoten[1].stand == 4)    knoten[1].stand--;

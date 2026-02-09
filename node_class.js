@@ -1,4 +1,5 @@
 import {zeichneVerbindung} from "./graph.js";
+import Graph from "./graph_class.js";
 
 let lastX = 0;
 let lastY = 0;
@@ -33,6 +34,9 @@ export default class Node {
         // Ist-Abstrakt - 2
         // Soll-Abstrakt -3
         this.stand = 1;
+
+        // ElternID für die Verbindung
+        this.elternID = null;
 
 
         // DeKnoten
@@ -239,43 +243,46 @@ export default class Node {
                         return;
                 }
 
-                // Im welchen Graphen 
-                // const knotenVon = Node.getByID(verbindungVon);
-                if(hauptgraph.knoten.includes(verbindungVon)){
-                    hauptgraph.addKnoten(knotenNach.id);
-                    hauptgraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
+                // Im welchen Graphen - anhand der zwei Knoten bestimmt
+                // Eins von denen existiert (ID != 0)
+                let graphVon = Graph.getByID(knotenVon.graph_id);
+                let graphNach = Graph.getByID(knotenNach.graph_id);
+
+                let aktuellerGraph = knotenVon.graph_id > 0 ? Graph.getByID(knotenVon.graph_id) :
+                    Graph.getByID(knotenNach.graph_id);
+
+
+                if(aktuellerGraph.knoten.includes(verbindungVon)){
+
+                    // ElternID aktualisieren
+                    if(verbindungsart == 1){
+                        // Bei einer hierarchischen Verbindung kann der Knoten
+                        // keine verschiedene Elternknoten haben 
+                        if(knotenNach.elternID > 0){
+                            alert("Unzulässige Verbindung");
+                            return;
+                        }
+
+                        knotenNach.elternID = verbindungVon;
+                    }
+                    if(verbindungsart > 1){
+                        let elternID1 = knotenVon.elternID;
+                        let elternID2 = knotenNach.elternID;
+
+                        if(elternID1 != elternID2){
+                            alert("Unzulässige Verbindung");
+                            return;
+                        }
+                    }
+
+                    aktuellerGraph.addKnoten(knotenNach.id);
+                    aktuellerGraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
 
                     knotenNach.el.className = "draggable-el";
-
-                }
-                else if((hauptgraph_1 != null) && (hauptgraph_1.knoten.includes(verbindungVon))){
-                    hauptgraph_1.addKnoten(knotenNach.id);
-                    hauptgraph_1.addConnection(verbindungVon, verbindungNach, verbindungsart);
-
-                    knotenNach.el.className = "draggable-el";
-                }
-                // KnotenVon ist keinem Graphen zugewiesen
-                else{
-                    let graphAktuell = knotenNach.graph_id;
-                    if(graphAktuell === 1){
-                        graphAktuell = hauptgraph;
-                    }
-                    else if(graphAktuell === 2){
-                        graphAktuell = hauptgraph_1;
-                    }
-
-                    graphAktuell.addKnoten(knotenVon.id);
-                    graphAktuell.addConnection(verbindungVon, verbindungNach, verbindungsart);
-
-                    knotenVon.el.className = "draggable-el";
                 }
 
                 // verbindung zeichnen
                 zeichneVerbindung();
-
-                // leereVerbindungen();
-                // hauptgraph.zeichneVerbindungen();
-                // if(hauptgraph_1 != null) hauptgraph_1.zeichneVerbindungen();
 
                 // Reset von verbindungsvariablen
                 verbinden_graph_id = null;

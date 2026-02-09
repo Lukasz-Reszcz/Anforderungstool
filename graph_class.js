@@ -109,13 +109,29 @@ export default class Graph {
         const knotenx = this.knoten.indexOf(nodexid);
         const knoteny = this.knoten.indexOf(nodeyid);
 
-        console.log("Knotenx: " + knotenx);
-        console.log("Knoteny: " + knoteny);
-        console.log(this.kanten);
+        // ElternID aktualisieren
+        if(con == 1){
+            // Bei einer hierarchischen Verbindung kann der Knoten
+            // keine verschiedene Elternknoten haben 
+            let knotenNach = Node.getByID(nodeyid)
+            if(knotenNach.elternID > 0){
+                alert("Unzulässige Verbindung");
+                return;
+            }
+
+            knotenNach.elternID = nodexid;
+        }
+        if(con > 1){
+            let elternID1 = Node.getByID(nodexid).elternID;
+            let elternID2 = Node.getByID(nodeyid).elternID;
+
+            if(elternID1 != elternID2){
+                alert("Unzulässige Verbindung");
+                return;
+            }
+        }
 
         this.kanten[knotenx][knoteny] = con;
-
-        console.log(this.kanten);
     }
 
     zeichneVerbindungen(){
