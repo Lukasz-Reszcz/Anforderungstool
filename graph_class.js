@@ -61,13 +61,25 @@ export default class Graph {
 
         // Knoten kopieren
         for(const knoten of this.knoten){
-            let knotenClone = Node.getByID(knoten).clone();
-            graphClone.addKnoten(knotenClone.id);
-            knotenMap.set(knoten, knotenClone.id);
+            let knotenClone = Node.clone(knoten);
+            if(knotenClone.wurzelknoten){
+                graphClone.knoten_h.set_info(knotenClone.info);
+                // graphClone.knoten_h.el.par.textContent = knotenClone.info;
+
+                knotenClone.el.style.visibility = "hidden";
+
+                knotenMap.set(this.knoten_h.id, graphClone.knoten_h.id);
+            }
+            else{
+                graphClone.addKnoten(knotenClone.id);
+                knotenMap.set(knoten, knotenClone.id);
+            }   
         }
 
-        graphClone.loescheKnoten(graphClone.knoten_h);
 
+
+        // graphClone.loescheKnoten(graphClone.knoten_h.id);
+        console.log(knotenMap);
         console.log(graphClone);
 
         // Verbindungen kopieren
@@ -81,8 +93,8 @@ export default class Graph {
         return graphClone;
     }
 
-    loescheKnoten(knoten){
-        const knotenid = knoten.id;
+    loescheKnoten(knotenid){
+        // const knotenid = knoten.id;
         const knotenindex = this.knoten.indexOf(knotenid);
         this.size--;
 
@@ -104,12 +116,13 @@ export default class Graph {
         console.log(this);
 
     }
-
+    // addVerbindung
     addConnection(nodexid, nodeyid, con){
         const knotenx = this.knoten.indexOf(nodexid);
         const knoteny = this.knoten.indexOf(nodeyid);
 
         // ElternID aktualisieren
+        /*
         if(con == 1){
             // Bei einer hierarchischen Verbindung kann der Knoten
             // keine verschiedene Elternknoten haben 
@@ -130,6 +143,7 @@ export default class Graph {
                 return;
             }
         }
+            */
 
         this.kanten[knotenx][knoteny] = con;
     }

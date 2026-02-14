@@ -176,7 +176,7 @@ function graphenVerbinden(){
                 continue;
             }
             Node.getByID(hauptgraph_1.knoten[i]).el.style.visibility = "hidden";
-            hauptgraph_1.loescheKnoten(hauptgraph_1.knoten[i]);
+            hauptgraph_1.loescheKnoten(hauptgraph_1.knoten[i].id);
         }
         hauptgraph_1 = null;
 
@@ -267,7 +267,7 @@ function findeGemeinsamenTeilgraphen(){
         }
     }
 
-    teilgraph.loescheKnoten(teilgraph.knoten_h);
+    teilgraph.loescheKnoten(teilgraph.knoten_h.id);
 
     // Den Knoten finden, der nur hierarchische Verbindungen hat
     let hauptknotenGefunden = false;
@@ -383,7 +383,7 @@ function loescheUnterknoten(graphID, unterknoten){
     
     let uk = new Set(unterknoten);
     for(const knoten of uk){
-        graph.loescheKnoten(Node.getByID(knoten));
+        graph.loescheKnoten(knoten);
     }
 }
 
@@ -485,7 +485,7 @@ document.getElementById("graphenLaden").addEventListener("click", async () => {
 
     for(let i=0; i<graphJSON.graphen.length; i++){
         let graph = new Graph();
-        graph.loescheKnoten(graph.knoten_h);
+        graph.loescheKnoten(graph.knoten_h.id);
 
         for(let j=0; j<graphJSON.graphen[i].knoten.length; j++){
             graph.addKnoten(graphJSON.graphen[i].knoten[j]);
@@ -589,4 +589,9 @@ document.getElementById("ueberschriften").addEventListener("dblclick", (event) =
     document.getElementById(event.target.id).style.backgroundColor = "#00FFFF";
     window.aktuelleKopfzeileID = event.target.id;
 
+})
+
+document.getElementById("").addEventListener("click", () => {
+    // Gemachte Graphen Speichern
+    
 })

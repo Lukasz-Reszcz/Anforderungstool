@@ -25,11 +25,11 @@ document.getElementById("knotenLoeschen").addEventListener('click', () => {
         for(let i=knotenZuLoeschen.length-1; i>=0; i--){
             console.log(Graph.getByID(graphID).knoten[i]);
             console.log("KID: ", knotenZuLoeschen[i]);
-            Graph.getByID(graphID).loescheKnoten(Node.getByID(knotenZuLoeschen[i]));
+            Graph.getByID(graphID).loescheKnoten(knotenZuLoeschen[i]);
         }
     }
     else if(!aktiverKnoten.wurzelknoten){
-        Graph.getByID(graphID).loescheKnoten(aktiverKnoten);
+        Graph.getByID(graphID).loescheKnoten(aktiverKnoten.id);
     }
 
     Node.aktiverKnoten = null;

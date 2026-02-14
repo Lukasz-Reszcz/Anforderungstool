@@ -54,9 +54,13 @@ export default class Node {
         return Node.register.get(id);
     }
 
-    clone(){
+    static clone(knotenID){
         // Weitere Infos kopieren
-        return new Node(this.info);
+        let knoten = Node.getByID(knotenID);
+        let knoten_ergebnis = new Node(knoten.info);
+        knoten_ergebnis.wurzelknoten = knoten.wurzelknoten;
+
+        return knoten_ergebnis;
     }
     
     append(direction, info){
@@ -74,11 +78,13 @@ export default class Node {
 
     set_info(info){
         this.info = info;
+        this.par.textContent = info;
     }
 
     set_anforgerungsquelle(aquelle){
         this.anforderungsquelle = aquelle;
     }
+
 
     search(text){
         // Debug
