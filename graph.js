@@ -60,59 +60,6 @@ setGraphenflaechen();
 
 // Den Graphen erstellen (die Verbindungen)
 
-
-function newGraph(){
-    if(hauptgraph == null){
-        hauptgraph = new Graph();
-        const knoten1 = new Node("Anforderung");
-        
-        knoten1.el.style.left = "0px";
-        knoten1.el.style.top = "200px";
-
-        const knoten2 = new Node("Test1");
-        // const knoten3 = new Node("Test3");
-
-        knoten2.el.style.left = "200px";
-        knoten2.el.style.top = "200px";
-
-        hauptgraph.addKnoten(knoten1.id);
-        hauptgraph.addKnoten(knoten2.id);
-
-        console.log(knoten1);
-
-        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten1.id, 1);
-        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten2.id, 1);
-        hauptgraph.addConnection(knoten1.id, knoten2.id, 2);
-    }
-    else if (hauptgraph_1 == null){
-        hauptgraph_1 = new Graph();
-
-        const knoten2 = new Node("Anforderung");
-        hauptgraph_1.addKnoten(knoten2.id);
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
-
-        const knoten12 = new Node("Neuer Graph");
-        hauptgraph_1.addKnoten(knoten12.id);
-
-        // Richtig platzieren
-        hauptgraph_1.knoten_h.el.style.top = "50px";
-        hauptgraph_1.knoten_h.el.style.left = "400px";
-
-        knoten2.el.style.top = "200px";
-        knoten2.el.style.left = "400px";
-
-        knoten12.el.style.top = "400px";
-        knoten12.el.style.left = "400px";
-
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
-        hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
-    }
-    else{
-        graph = new Graph();
-    }
-}
-
 let graphenVerbindenZustand = false;
 let modellEtappe = 1;
 
@@ -389,7 +336,8 @@ function loescheUnterknoten(graphID, unterknoten){
 
 //=========================================================
 document.getElementById("neuerGraph").addEventListener('click', (event) => {
-    newGraph();
+    let graph = new Graph();
+    positionAnpassen(graph.knoten_h, "knoten");
 })
 document.getElementById("graphenVerbinden").addEventListener('click', (event) => {
     graphenVerbinden();
@@ -398,6 +346,9 @@ document.getElementById("neuerKnoten").addEventListener('click', (event) => {
     let knoten = new Node("Test");
     knoten.el.className = "draggable-el-freierKnoten";
 
+    positionAnpassen(knoten, "knoten");
+
+    /*
     //Knotenposition anhand der Tabelle bestimmen
     const rect = document.getElementById("myCanvas").getBoundingClientRect();
 
@@ -426,8 +377,41 @@ document.getElementById("neuerKnoten").addEventListener('click', (event) => {
             knoten.stand = 2;
     if(window.aktuelleKopfzeileID == "sollAbstrakt")
             knoten.stand = 3;
+    */
     
 });
+
+
+
+function positionAnpassen(element, typ){
+ 
+        //Knotenposition anhand der Tabelle bestimmen
+        const rect = document.getElementById("myCanvas").getBoundingClientRect();
+
+        let pos_x = parseInt(rect.left);
+        let pos_y = parseInt(rect.top);
+        let breite = parseInt(document.getElementById("myCanvas").clientWidth/3);
+
+        if(window.aktuelleKopfzeileID == "istAbstrakt")
+            pos_x += breite;
+        else if(window.aktuelleKopfzeileID == "sollAbstrakt")
+            pos_x += 2*breite;
+
+        pos_x += 50;
+        pos_y += 50;
+       
+        element.el.style.left = pos_x + "px";
+        element.el.style.top = pos_y + "px";
+
+        // Den Stand (Entwicklungsphase) ändern
+        if(window.aktuelleKopfzeileID == "istAbstrakt")
+                element.stand = 2;
+        if(window.aktuelleKopfzeileID == "sollAbstrakt")
+                element.stand = 3;
+
+        // Debug
+        console.log(element.stand);
+}
 
 document.getElementById("zeichneVerbindung").addEventListener('click', (event) => {
     zeichneVerbindung();
@@ -581,6 +565,7 @@ document.getElementById("knotengleichungErstellen").addEventListener("click", ()
 })
 
 document.getElementById("ueberschriften").addEventListener("dblclick", (event) => {
+
     // Reset
     document.getElementById("istKonkret").style.backgroundColor = null;
     document.getElementById("istAbstrakt").style.backgroundColor = null;
@@ -591,7 +576,59 @@ document.getElementById("ueberschriften").addEventListener("dblclick", (event) =
 
 })
 
-document.getElementById("").addEventListener("click", () => {
-    // Gemachte Graphen Speichern
+// document.getElementById("").addEventListener("click", () => {
+//     // Gemachte Graphen Speichern
     
-})
+// })
+
+document.getElementById("zeichneTestGraphen").addEventListener("click", () => {
+    if(hauptgraph == null){
+        hauptgraph = new Graph();
+        const knoten1 = new Node("Anforderung");
+        
+        knoten1.el.style.left = "0px";
+        knoten1.el.style.top = "200px";
+
+        const knoten2 = new Node("Test1");
+        // const knoten3 = new Node("Test3");
+
+        knoten2.el.style.left = "200px";
+        knoten2.el.style.top = "200px";
+
+        hauptgraph.addKnoten(knoten1.id);
+        hauptgraph.addKnoten(knoten2.id);
+
+        console.log(knoten1);
+
+        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten1.id, 1);
+        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten2.id, 1);
+        hauptgraph.addConnection(knoten1.id, knoten2.id, 2);
+    }
+    else if (hauptgraph_1 == null){
+        hauptgraph_1 = new Graph();
+
+        const knoten2 = new Node("Anforderung");
+        hauptgraph_1.addKnoten(knoten2.id);
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
+
+        const knoten12 = new Node("Neuer Graph");
+        hauptgraph_1.addKnoten(knoten12.id);
+
+        // Richtig platzieren
+        hauptgraph_1.knoten_h.el.style.top = "50px";
+        hauptgraph_1.knoten_h.el.style.left = "400px";
+
+        knoten2.el.style.top = "200px";
+        knoten2.el.style.left = "400px";
+
+        knoten12.el.style.top = "400px";
+        knoten12.el.style.left = "400px";
+
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
+        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
+        hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
+    }
+    else{
+        graph = new Graph();
+    }
+});

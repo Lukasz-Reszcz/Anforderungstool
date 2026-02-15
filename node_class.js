@@ -162,7 +162,14 @@ export default class Node {
 
             // Die Rahmen des zuständigen Bereiches nicht überschreiten
             const breite = document.getElementById("myCanvas").clientWidth/3;
+            const rect = document.getElementById("myCanvas").getBoundingClientRect();
+
             if(event.clientX >= this.stand*breite || event.clientX <= (this.stand-1)*breite){
+                return;
+            }
+
+            // Die obere und untere Schranke nicht überschreiten
+            if(event.clientY <= rect.top || event.clientY > rect.bottom){
                 return;
             }
 
@@ -185,8 +192,6 @@ export default class Node {
             lastX = event.clientX;
             lastY = event.clientY;
 
-
-            // Debug
             zeichneVerbindung()
         })
     }
@@ -285,6 +290,9 @@ export default class Node {
                     aktuellerGraph.addConnection(verbindungVon, verbindungNach, verbindungsart);
 
                     knotenNach.el.className = "draggable-el";
+                }
+                else if(aktuellerGraph.knoten.includes(knotenNach.id)){
+                    alert("Die Verbindung sollte in dem Knoten anfangen, der schon in einem Graphen ist.");
                 }
 
                 // verbindung zeichnen
