@@ -1,0 +1,66 @@
+.menue{
+    display: flex;
+    background-color: #333;
+}
+
+.hauptoption{
+    position: relative;
+
+    float: left;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 10px 12px;
+    text-decoration: none;
+    margin: 0;
+    border: none;
+}
+
+.unteroptionen{
+    position: absolute;
+    display: none;
+    min-width: 100px;
+    
+    /*direkt unten positionieren*/
+    top: 100%;
+    left: 0;
+
+    background-color: gainsboro;
+
+    color: black
+}
+
+.unteroptionen p{
+    height: 100%;
+    padding: 10px 14px;
+    margin: 0;
+}
+
+
+.hauptoption:hover .unteroptionen{
+    display: block;
+}
+
+.hauptoption:hover, .unteroptionen p:hover{
+    background-color: orange;
+    z-index: 5;
+}
+
+
+
+/*
+.menueOption p:hover{
+    display: block;
+    background-color: #444;
+}
+
+.menue:hover .menueOptions{
+    display: block;
+}
+
+.menuOptions p{
+    display: block;
+    margin: 0;
+    padding: 8px 15px;
+}
+*/

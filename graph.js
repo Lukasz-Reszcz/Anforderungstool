@@ -338,6 +338,9 @@ function loescheUnterknoten(graphID, unterknoten){
 document.getElementById("neuerGraph").addEventListener('click', (event) => {
     let graph = new Graph();
     positionAnpassen(graph.knoten_h, "knoten");
+
+    let aufgabenname = prompt("Gebe den Aufgabennamen an", "Aufgabenname");
+    graph.knoten_h.set_info(aufgabenname);
 })
 document.getElementById("graphenVerbinden").addEventListener('click', (event) => {
     graphenVerbinden();

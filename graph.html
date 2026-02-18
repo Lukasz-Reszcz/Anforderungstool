@@ -4,37 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="menu.css"/>
     <link rel="stylesheet" href="graph.css"/>
 </head>
 <body>
-    <div id="menue">
-        <div class="menue">
-            <p class="hauptoption">Allgemeine Optionen</p>
-            <div class="menueOptions" style="margin-bottom: 0px;">
-                <p>Eine Option</p>
-                <p>Eine zweite Option</p>
-            </div>
-        </div>
-        <div class="menue">
-            <p class="hauptoption">Aufgabenoptionen</p>
-            <div class="menueOptions" style="margin-bottom: 0px;">
-                <p id="neuerKnoten" class="knotenOpt">Knoten erstellen</p>
-                <p id="knoteninfo" class="knotenOpt">Knoteninfo</p>
-                <p id="knotenLoeschen" class="knotenOpt">Knoten löschen</p> 
-                <p id="knotenNamenAendern" class="knotenOpt">Anforgerungsname ändern</p>
-                <p id="TeilgraphenFinden" class="knotenOpt">Teilgraphen finden</p>
-                <p id="graphenKopieren" class="knotenOpt">Graphen Kopieren</p>
-                <p id="knotenAutomatisieren" class="knotenOpt">Knoten automatisieren</p>
-                <p id="quelleHinzufuegen" class="knotenOpt">Quelle hinzufügen</p>
-
-                <p id="knotengleichungErstellen" class="knotenOpt">knotengleichung erstellen (Testfunktion)</p>
-            </div>
+    <div class="menue">
+        <div class="hauptoption">
+            <p>Allgemeine Optionen</p>
         </div>
 
-        <div class="menue">
-            <p class="hauptoption">Aufgabenmodell</p>
+        <div class="hauptoption">
+            <p>Teilaufgaben</p>
+                <div class="unteroptionen">
+                    <p id="neuerKnoten">Teilaufgabe erstellen</p>
+                    <p id="knoteninfo">Teilaufgabeinfo anzeigen</p>
+                    <p id="knotenLoeschen">Knoten löschen</p> 
+                    <p id="knotenNamenAendern">Anforderungsname ändern</p>
+                    <p id="TeilgraphenFinden">Teilgraphen finden</p>
+                    <p id="graphenKopieren">Graphen Kopieren</p>
+                    <p id="knotenAutomatisieren">Knoten automatisieren</p>
+                    <p id="quelleHinzufuegen">Quelle hinzufügen</p>
 
-            <div class="menueOptions">
+                    <p id="knotengleichungErstellen">knotengleichung erstellen (Testfunktion)</p>
+                </div>
+        </div>
+
+        <div class="hauptoption">
+            <p>Aufgabenmodell</p>
+            <div class="unteroptionen">
                 <p id="neuerGraph">Neuer Graph</p>
                 <p id="graphenVerbinden">Graphen verbinden</p>
                 <p id="zeichneVerbindung">verbindung Zeichnen</p>
@@ -44,28 +41,18 @@
             </div>
         </div>
 
-        <div class="menue">
-            <p class="hauptoption">Verbindung</p>
-
-            <div class="menueOptions">
-                <p></p>
+        <div class="hauptoption">
+            <p>Verbinden</p>
+            <div class="unteroptionen">
+                <p value="1">-- (1)</p>
+                <p value="2">>> (2)</p>
+                <p value="3">[] (3)</p>
             </div>
         </div>
 
-        <div class="menue">
-            <p class="hauptoption">Andere</p>
-
-            <div class="menueOptions">
-                <p></p>
-            </div>
-        </div>
-
-        <br>
-        <br>
-        <br>
-        <br>
         
 
+        
         <div id="verbinden">
             <p id="knotenVerbinden" class="knotenOpt" style="width: 100px;">Verbinden</p>
             <select id="verbindungsarten">
@@ -76,6 +63,7 @@
                 <option value="5">!! (5)</option> -->
             </select>
         </div>
+ 
     </div>
 
 
