@@ -1,0 +1,15 @@
+#verbindungsarteingabeform{
+    visibility: hidden;
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    border: 1px solid black;
+
+    width: 500px;
+    height: 500px;
+}
+
+#verbformschliessen{
+    color: white;
+    background-color: red;
+}

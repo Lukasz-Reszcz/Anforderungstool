@@ -64,13 +64,7 @@
 
 .hauptcontainer{
     width: 100%;
-    height: 500px;
-}
-
-#verbinden{
-    display: flex;
-    align-items: center;
-
+    
 }
 
 td{

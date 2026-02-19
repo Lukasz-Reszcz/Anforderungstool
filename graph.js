@@ -1,6 +1,7 @@
 import Node from "./node_class.js";
 import "./knotenMenue.js";
 import Graph from "./graph_class.js";
+import "./verbindungsartform/verbindungsartform.js";
 
 // globale Variablen
 window.nodeMaxID = 0;
@@ -15,14 +16,10 @@ window.verbinden_graph_id = 0;
 window.verbindungVon = 0;
 window.verbindungNach = 0;
 
-// Zwei vorhandene Graphen
-window.hauptgraph = null;
-window.hauptgraph_1 = null;
-
-window.aktiverKnoten = null;
-
 // Verbindungsoptionen
-window.optionnummer = 3;
+window.optionnummer = 1;
+window.maxOptionnummer = 3;
+window.verbindungsarten = null;
 
 // aktuelle kopfzeile ()
 window.aktuelleKopfzeileID = "istKnonkret";
@@ -440,20 +437,20 @@ document.getElementById("graphenKopieren").addEventListener('click', (event) => 
     Graph.register.get(Node.aktiverKnoten.graph_id).clone();
 })
 
-document.getElementById("verbindungsarten").addEventListener("click", () => {
-    //------------
-    let sel = document.getElementById("verbindungsarten");
-    let option = document.createElement("option");
-    option.text = localStorage.getItem("option");
+// document.getElementById("verbindungsarten").addEventListener("click", () => {
+//     //------------
+//     let sel = document.getElementById("verbindungsarten");
+//     let option = document.createElement("option");
+//     option.text = localStorage.getItem("option");
     
-    if(sel.options[window.optionnummer-1].text != option.text){
-        window.optionnummer++;
-        option.value = window.optionnummer;
+//     if(sel.options[window.optionnummer-1].text != option.text){
+//         window.optionnummer++;
+//         option.value = window.optionnummer;
     
-        sel.add(option);
-    }
-    //------------------
-})
+//         sel.add(option);
+//     }
+//     //------------------
+// })
 
 document.getElementById("graphenLaden").addEventListener("click", async () => {
     let graphenDatei = document.getElementById("graphenDatei").files[0];
@@ -635,3 +632,17 @@ document.getElementById("zeichneTestGraphen").addEventListener("click", () => {
         graph = new Graph();
     }
 });
+
+document.getElementById("verbindung").addEventListener("click", (event) => {
+    let verbindungsart = parseInt(event.target.dataset.value);
+    window.optionnummer = verbindungsart;
+
+    console.log(window.optionnummer);
+
+    const aktiverKnoten = Node.aktiverKnoten;
+    
+    const msg = "Der Knopf verbinden wurde gedrückt, ID: " + aktiverKnoten.id;
+    document.getElementById("ausgabetest").textContent = msg;
+
+    Node.verbindungAktiv = true;
+})

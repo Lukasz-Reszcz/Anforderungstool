@@ -1,4 +1,5 @@
 import Node from "./node_class.js"
+import {getVerbindungsarten} from "./verbindungsartform/verbindungsartform.js"
 
 export default class Graph {
     static register = new Map();
@@ -173,9 +174,7 @@ export default class Graph {
 
 
         // Einstellungen bzgl. Verbindungsarten von einer json-Datei lesen
-        let jsonObj = localStorage.getItem("einstellungen");
-        
-        let obj = JSON.parse(jsonObj);
+        let obj = getVerbindungsarten();
 
         // Es wird nur ein Graph gezeichnet
         for (let i=0; i<this.knoten.length; i++){

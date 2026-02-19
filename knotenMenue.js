@@ -37,15 +37,6 @@ document.getElementById("knotenLoeschen").addEventListener('click', () => {
     zeichneVerbindung();
 })
 
-document.getElementById("knotenVerbinden").addEventListener('click', () => {
-    const aktiverKnoten = Node.aktiverKnoten;
-
-    const msg = "Der Knopf verbinden wurde gedrückt, ID: " + aktiverKnoten.id;
-    document.getElementById("ausgabetest").textContent = msg;
-
-    Node.verbindungAktiv = true;
-})
-
 document.getElementById("knotenNamenAendern").addEventListener('click', () => {
     let anforderungsname = prompt("Gib den Anforderungsnamen an: ", "Anforderung");
     if((anforderungsname !== "") && (anforderungsname !== null)){

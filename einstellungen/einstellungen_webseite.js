@@ -6,11 +6,18 @@ let data_1 = `{
             ]
         }`
 
+let maxOptionnummer = 3;
+let option = []; //typ, farbe, wert
+
 function getEinstellungen(){
     localStorage.setItem("einstellungen", data_1);
     console.log(data_1)
 
     return data_1;
+}
+
+export function getOption(){
+    return option;
 }
 
 
@@ -57,6 +64,13 @@ document.getElementById("btnEinstellungHinzufuegen").addEventListener("click", (
 
     //-----------
     localStorage.setItem("option", einstellungstext);
+    
+    // Nächte Option aktualisieren
+    maxOptionnummer++;
+
+    option[0] = einstellungstext;
+    option[1] = einstellungsfarbe;
+    option[2] = maxOptionnummer;
 
     getEinstellungen();
 })

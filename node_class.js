@@ -196,7 +196,7 @@ export default class Node {
         })
     }
 
-    // Den Knoten akitieren
+    // Den Knoten aktivieren
     make_aktiverKnoten(){
         this.el.addEventListener('dblclick', (event) => {
             for(let knotenh of Node.register){
@@ -221,8 +221,10 @@ export default class Node {
                 Node.verbindenVon = Node.aktiverKnoten;
                 Node.aktiverKnoten = this;
 
-                const verbindungsart = parseInt(document.getElementById("verbindungsarten").value);
+                // const verbindungsart = parseInt(document.getElementById("verbindungsarten").value);
+                const verbindungsart = window.optionnummer;
 
+                // alert(parseInt(document.getElementById()));
 
                 document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + this.id;
                             // verbinden->Menü->Knoten
