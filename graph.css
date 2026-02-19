@@ -6,6 +6,8 @@
     padding: 2px 5px;
     cursor: grab;
     border-radius: 20px;
+
+    user-select: none;
 }
 
 .draggable-el-wurzelknoten {
@@ -16,6 +18,8 @@
     padding: 2px 5px;
     cursor: grab;
     border-radius: 20px;
+
+    user-select: none;
 }
 
 .draggable-el-freierKnoten {
@@ -26,6 +30,8 @@
     padding: 2px 5px;
     cursor: grab;
     border-radius: 20px;
+
+    user-select: none;
 }
 
 .show {

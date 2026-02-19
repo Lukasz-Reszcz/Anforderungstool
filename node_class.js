@@ -224,9 +224,7 @@ export default class Node {
                 // const verbindungsart = parseInt(document.getElementById("verbindungsarten").value);
                 const verbindungsart = window.optionnummer;
 
-                // alert(parseInt(document.getElementById()));
-
-                document.getElementById("ausgabetest").textContent += " - verbunden mit ID: " + this.id;
+                document.getElementById("ausgabetest").textContent += " - verbunden mit " + this.info;
                             // verbinden->Menü->Knoten
                             // event.target.parentElement.parentElement.id;
 

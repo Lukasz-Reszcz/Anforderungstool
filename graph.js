@@ -347,38 +347,8 @@ document.getElementById("neuerKnoten").addEventListener('click', (event) => {
     knoten.el.className = "draggable-el-freierKnoten";
 
     positionAnpassen(knoten, "knoten");
-
-    /*
-    //Knotenposition anhand der Tabelle bestimmen
-    const rect = document.getElementById("myCanvas").getBoundingClientRect();
-
-    let pos_x = parseInt(rect.left);
-    let pos_y = parseInt(rect.top);
-    let breite = parseInt(document.getElementById("myCanvas").clientWidth/3);
-
-    console.log(pos_x);
-    console.log(pos_y);
-    console.log(breite);
-    
-
-    if(window.aktuelleKopfzeileID == "istAbstrakt")
-        pos_x += breite;
-    else if(window.aktuelleKopfzeileID == "sollAbstrakt")
-        pos_x += 2*breite;
-
-    pos_x += 50;
-    pos_y += 50;
-
-    knoten.el.style.left = pos_x + "px";
-    knoten.el.style.top = pos_y + "px";
-
-    // Den Stand (Entwicklungsphase) ändern
-    if(window.aktuelleKopfzeileID == "istAbstrakt")
-            knoten.stand = 2;
-    if(window.aktuelleKopfzeileID == "sollAbstrakt")
-            knoten.stand = 3;
-    */
-    
+    let aufgabenname = prompt("Gebe den Teilaufgabennamen an", "Teilaufgabe");
+    knoten.set_info(aufgabenname);
 });
 
 
@@ -641,7 +611,7 @@ document.getElementById("verbindung").addEventListener("click", (event) => {
 
     const aktiverKnoten = Node.aktiverKnoten;
     
-    const msg = "Der Knopf verbinden wurde gedrückt, ID: " + aktiverKnoten.id;
+    const msg = "Der Knopf verbinden wurde gedrückt: " + aktiverKnoten.info;
     document.getElementById("ausgabetest").textContent = msg;
 
     Node.verbindungAktiv = true;

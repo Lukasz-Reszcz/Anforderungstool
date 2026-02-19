@@ -26,7 +26,6 @@ document.getElementById("btnVerbindungsartHinzufuegen").addEventListener("click"
     const farbe = document.getElementById("einstellungsfarbe").value;
     const optionnummer = verbindungsarten.verbindungsarten.length+1;
     
-    
     verbindungsarten.verbindungsarten.push({typ, farbe, optionnummer});
 
     console.log(verbindungsarten)
