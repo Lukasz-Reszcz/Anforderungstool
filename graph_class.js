@@ -100,6 +100,7 @@ export default class Graph {
         this.size--;
 
         // Knoten unsichtbar machen
+        let knoten = Node.getByID(knotenid);
         knoten.el.style.visibility = "hidden";
 
         // Knoten aus der Liste loeschen

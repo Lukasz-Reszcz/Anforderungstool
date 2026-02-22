@@ -228,8 +228,6 @@ export default class Node {
                             // verbinden->Menü->Knoten
                             // event.target.parentElement.parentElement.id;
 
-
-
                 // Knoten aus verschiedenen Graphen
                 // Keiner der Knoten gehört einem Graphen
                 const knotenVon = Node.verbindenVon;

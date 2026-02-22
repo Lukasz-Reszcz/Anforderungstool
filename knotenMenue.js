@@ -14,6 +14,9 @@ document.getElementById("knotenLoeschen").addEventListener('click', () => {
     const aktiverKnoten = Node.aktiverKnoten;
     const graphID = aktiverKnoten.graph_id;
 
+    // Debug
+    alert("graphID: " + graphID);
+
     if(graphID == 0){
         aktiverKnoten.el.style.visibility = "hidden";
     }
