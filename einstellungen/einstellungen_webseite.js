@@ -38,8 +38,6 @@ document.getElementById("jsonFile").addEventListener("click", () => {
 document.getElementById("einstellungenHochladen").addEventListener("change", async (event) => {
     const file = document.getElementById("einstellungenHochladen").files[0]; //event.target.files[0];
 
-    const reader = new FileReader();
-
     let data = await file.text();
     data = JSON.parse(data);
 

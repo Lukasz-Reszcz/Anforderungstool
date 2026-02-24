@@ -2,6 +2,7 @@ import Node from "./node_class.js";
 import "./knotenMenue.js";
 import Graph from "./graph_class.js";
 import "./verbindungsartform/verbindungsartform.js";
+import "./graphenform/graphenform.js";
 
 // globale Variablen
 window.nodeMaxID = 0;
@@ -421,49 +422,6 @@ document.getElementById("graphenKopieren").addEventListener('click', (event) => 
 //     }
 //     //------------------
 // })
-
-document.getElementById("graphenLaden").addEventListener("click", async () => {
-    let graphenDatei = document.getElementById("graphenDatei").files[0];
-
-    let graphJSON = await graphenDatei.text();
-
-    graphJSON = JSON.parse(graphJSON);
-
-    console.log(graphJSON);
-
-    for(let i=0; i<graphJSON.knoten.length; i++){
-        let knoten = new Node(graphJSON.knoten[i].info);
-        knoten.el.style.left = graphJSON.knoten[i].pos_x;
-        knoten.el.style.top = graphJSON.knoten[i].pos_y;
-    }
-
-    for(let i=0; i<graphJSON.graphen.length; i++){
-        let graph = new Graph();
-        graph.loescheKnoten(graph.knoten_h.id);
-
-        for(let j=0; j<graphJSON.graphen[i].knoten.length; j++){
-            graph.addKnoten(graphJSON.graphen[i].knoten[j]);
-        }
-
-        for(let j=0; j<graphJSON.graphen[i].kanten.length; j++){
-            console.log(graphJSON.graphen[i].kanten[j]);
-            const graphen_kanten = graphJSON.graphen[i].kanten[j];
-            graph.addConnection(graphen_kanten.von, graphen_kanten.nach, graphen_kanten.typ);
-        }
-    }
-    // Klasse ändern
-    for(let i=0; i<graphJSON.knoten.length; i++){
-            let knoten = Node.getByID(graphJSON.knoten[i].id);
-            if(knoten.graph_id == 0)    
-                knoten.el.className = "draggable-el-freierKnoten";
-
-            if(graphJSON.knoten[i].wurzelknoten == 1){
-                Node.getByID(graphJSON.knoten[i].id).el.className = "draggable-el-wurzelknoten";
-            }
-
-    }
-    
-})
 
 document.getElementById("nachIstAbstrakt").addEventListener("click", () => {
     const graphID = Node.aktiverKnoten.graph_id;

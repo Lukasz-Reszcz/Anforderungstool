@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="menu.css"/>
     <link rel="stylesheet" href="graph.css"/>
     <link rel="stylesheet" href="verbindungsartform/verbindungsartform.css">
+    <link rel="stylesheet" href="graphenform/graphenform.css">
 
 </head>
 <body>
@@ -56,6 +57,14 @@
         <div class="hauptoption">
             <p id="optVerbindungsartHinzufuegen">Verbindungsart hinzufügen</p>
         </div>
+
+        <div class="hauptoption">
+            <p id="optGraphenspeichern">Aufgabenmodell (Datei)</p>
+            <div class="unteroptionen">
+                <p id="graphHochladen">Aufgabenmodell hochladen</p>
+                <p id="graphHerunterladen">Aufgabenmodell herunterladen</p>
+            </div>
+        </div>
     </div>
 
 
@@ -76,7 +85,7 @@
     </div>
     <div style="border: 1px solid #000000;">
         <a id="einstellung" href="./einstellungen/einstellungen.html">Ver</a> <br>
-        <input id="graphenDatei" type="file">
+        <input id="graphenDatei+" type="file">
         <button id="graphenLaden">Graphen Laden</button> <br>
         <button id="graphenSpeichern">Graphen Speichern</button>
     </div>
@@ -90,10 +99,18 @@
         <button id="btnVerbindungsartHinzufuegen">Verbindungstyp hinzufügen</button> <br>
         <button id="verbformschliessen" style="text-align: center;">schließen</button>
     </div>
+
+    <div id="graphenform" style="text-align: center;">
+        <h3>Aufgabenmodell speichern</h3>
+        <button id="btngraphenSpeichern">Aufgabenmodell speichern</button>
+        <h3>Aufgabenmodell hochladen</h3>
+        <input id="graphenDatei" type="file">
+        <button id="btngraphenHochladen">Aufgabenmodell hochladen</button> <br>
+        <button id="graphenformschliessen">schließen</button>
+    </div>
     
-
-
     <script src=""></script> 
     <script type="module" src="graph.js"></script>
+    <script src="graphenform/graphenform.js"></script>
 </body>
 </html>

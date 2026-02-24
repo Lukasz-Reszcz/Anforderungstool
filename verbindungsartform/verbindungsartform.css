@@ -10,7 +10,7 @@
     height: 200px;
 }
 
-#verbformschliessen{
+#verbformschliessen, #graphenformschliessen{
     position: relative;
     color: white;
     background-color: red;
