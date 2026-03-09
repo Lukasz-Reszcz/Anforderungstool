@@ -66,8 +66,10 @@ export default class Node {
         // Position kopieren
         knoten_ergebnis.el.style.top = knoten.el.style.top;
         knoten_ergebnis.el.style.left = knoten.el.style.left;
-        
 
+        // Den Stand kopieren
+        knoten_ergebnis.stand = knoten.stand;
+    
         return knoten_ergebnis;
     }
 
@@ -322,7 +324,7 @@ export default class Node {
         alert(infoString);
     }
 
-    verbindungErstellen(){
-
+    loesche_Knoten(){
+        this.el.style.visibility = "hidden";
     }
 }

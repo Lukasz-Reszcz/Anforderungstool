@@ -70,17 +70,18 @@ export default class Graph {
                 // weil es ein neuer Knoten ist, der mit dem Graphen
                 graphClone.knoten_h.el.style.top = knotenClone.el.style.top;
                 graphClone.knoten_h.el.style.left = knotenClone.el.style.left;
-                
+
+                graphClone.knoten_h.stand = knotenClone.stand;
 
                 Node.mapKopie.set(this.knoten_h.id, graphClone.knoten_h.id);
+
+                // Den Kopierten Knoten löschen
+                knotenClone.loesche_Knoten();
             }
             else{
                 graphClone.addKnoten(knotenClone.id);
                 Node.mapKopie.set(knotenid, knotenClone.id);
             }   
-
-            // Idee einen static set für den Kopierten Graphen hinzufügen
-            // Die Phase
         }
 
         // graphClone.loescheKnoten(graphClone.knoten_h.id);

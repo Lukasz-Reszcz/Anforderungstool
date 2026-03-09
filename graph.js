@@ -423,6 +423,11 @@ document.getElementById("graphenKopieren").addEventListener('click', (event) => 
 //     //------------------
 // })
 
+document.getElementById("nachIstKonkret").addEventListener("click", () => {
+    const graphID = Node.aktiverKnoten.graph_id;
+    graphenVerschieben(graphID, 1);
+})
+
 document.getElementById("nachIstAbstrakt").addEventListener("click", () => {
     const graphID = Node.aktiverKnoten.graph_id;
     graphenVerschieben(graphID, 2);
