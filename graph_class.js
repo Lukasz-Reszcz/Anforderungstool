@@ -58,35 +58,39 @@ export default class Graph {
 
     clone(){
         let graphClone = new Graph();
-        let knotenMap = new Map();
 
         // Knoten kopieren
-        for(const knoten of this.knoten){
-            let knotenClone = Node.clone(knoten);
+        for(const knotenid of this.knoten){
+            let knotenClone = Node.clone(knotenid);
             if(knotenClone.wurzelknoten){
-                graphClone.knoten_h.set_info(knotenClone.info);
+                graphClone.knoten_h.set_info(knotenClone.info + " - Kopie");
                 // graphClone.knoten_h.el.par.textContent = knotenClone.info;
 
-                knotenClone.el.style.visibility = "hidden";
+                // Warum muss der Wurzelknoten extra eingestellt werden
+                // weil es ein neuer Knoten ist, der mit dem Graphen
+                graphClone.knoten_h.el.style.top = knotenClone.el.style.top;
+                graphClone.knoten_h.el.style.left = knotenClone.el.style.left;
+                
 
-                knotenMap.set(this.knoten_h.id, graphClone.knoten_h.id);
+                Node.mapKopie.set(this.knoten_h.id, graphClone.knoten_h.id);
             }
             else{
                 graphClone.addKnoten(knotenClone.id);
-                knotenMap.set(knoten, knotenClone.id);
+                Node.mapKopie.set(knotenid, knotenClone.id);
             }   
+
+            // Idee einen static set für den Kopierten Graphen hinzufügen
+            // Die Phase
         }
 
-
-
         // graphClone.loescheKnoten(graphClone.knoten_h.id);
-        console.log(knotenMap);
+        console.log(Node.mapKopie);
         console.log(graphClone);
 
         // Verbindungen kopieren
         for(let i=0; i<this.knoten.length; i++){
             for(let j=0; j<this.knoten.length; j++){
-                graphClone.addConnection(knotenMap.get(this.knoten[i]), knotenMap.get(this.knoten[j]), 
+                graphClone.addConnection(Node.mapKopie.get(this.knoten[i]), Node.mapKopie.get(this.knoten[j]), 
                     this.kanten[i][j]);
             }
         }

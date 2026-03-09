@@ -425,32 +425,34 @@ document.getElementById("graphenKopieren").addEventListener('click', (event) => 
 
 document.getElementById("nachIstAbstrakt").addEventListener("click", () => {
     const graphID = Node.aktiverKnoten.graph_id;
-    graphenVerschieben(1, graphID);
+    graphenVerschieben(graphID, 2);
 });
 document.getElementById("nachSollAbstrakt").addEventListener("click", () => {
     const graphID = Node.aktiverKnoten.graph_id;
-    graphenVerschieben(2, graphID);
+    graphenVerschieben(graphID, 3);
 });
 
 
-function graphenVerschieben(stand, graphID){
+// Hier steht der Stan, wo der Graphen landen soll
+function graphenVerschieben(graphID, stand){
     let breite = document.getElementById("myCanvas").clientWidth/3;
 
     let knoten = Node.aktiverKnoten;
 
-    if(graphID == 0 && knoten.stand == stand){
-        knoten.el.style.left = `${parseInt(knoten.el.style.left) + breite}px`;
+    // Einen einzelnen Knoten verschieben
+    if(graphID == 0 /*&& knoten.stand == stand*/){
+        knoten.el.style.left = `${parseInt(knoten.el.style.left)%breite + (stand-1)*breite}px`;
         knoten.stand++;
         return;
     }
 
     for(let knoten of Node.register){
         if(knoten[1].graph_id != graphID || knoten[1].graph_id == 0)   continue;
-        if(knoten[1].stand == stand){
-            knoten[1].stand++;
-            if(knoten[1].stand == 4)    knoten[1].stand--;
-            knoten[1].el.style.left = `${parseInt(knoten[1].el.style.left) + breite}px`;
-        }
+        // if(knoten[1].stand == stand){
+            knoten[1].stand = stand;
+            // if(knoten[1].stand == 4)    knoten[1].stand--;
+            knoten[1].el.style.left = `${parseInt(knoten[1].el.style.left)%breite + (stand-1)*breite}px`;
+        // }
     }
 
     zeichneVerbindung();
@@ -510,55 +512,57 @@ document.getElementById("ueberschriften").addEventListener("dblclick", (event) =
 // })
 
 document.getElementById("zeichneTestGraphen").addEventListener("click", () => {
-    if(hauptgraph == null){
-        hauptgraph = new Graph();
-        const knoten1 = new Node("Anforderung");
+    let beispielgraph_1 = new Graph();
+    
+    // Die Knoten zu dem ersten Graphen
+    let knoten1 = new Node("Anforderung");
         
-        knoten1.el.style.left = "0px";
-        knoten1.el.style.top = "200px";
+    knoten1.el.style.left = "0px";
+    knoten1.el.style.top = "200px";
 
-        const knoten2 = new Node("Test1");
-        // const knoten3 = new Node("Test3");
+    let knoten2 = new Node("Test1");
+    // const knoten3 = new Node("Test3");
 
-        knoten2.el.style.left = "200px";
-        knoten2.el.style.top = "200px";
+    knoten2.el.style.left = "200px";
+    knoten2.el.style.top = "200px";
 
-        hauptgraph.addKnoten(knoten1.id);
-        hauptgraph.addKnoten(knoten2.id);
+    // Die Position des Wurzelknotens anpassen
+    beispielgraph_1.knoten_h.el.style.top = "150px";
 
-        console.log(knoten1);
+    // Die Verbindungen hinzufügen
+    beispielgraph_1.addKnoten(knoten1.id);
+    beispielgraph_1.addKnoten(knoten2.id);
 
-        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten1.id, 1);
-        hauptgraph.addConnection(hauptgraph.knoten_h.id, knoten2.id, 1);
-        hauptgraph.addConnection(knoten1.id, knoten2.id, 2);
-    }
-    else if (hauptgraph_1 == null){
-        hauptgraph_1 = new Graph();
+    beispielgraph_1.addConnection(beispielgraph_1.knoten_h.id, knoten1.id, 1);
+    beispielgraph_1.addConnection(beispielgraph_1.knoten_h.id, knoten2.id, 1);
+    beispielgraph_1.addConnection(knoten1.id, knoten2.id, 2);
 
-        const knoten2 = new Node("Anforderung");
-        hauptgraph_1.addKnoten(knoten2.id);
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
+    // Die Knoten zu dem zweiten Graphen
+    let beispielgraph_2 = new Graph();
 
-        const knoten12 = new Node("Neuer Graph");
-        hauptgraph_1.addKnoten(knoten12.id);
+    // Knoten zu dem zweiten Graphen
+    let knoten21 = new Node("Anforderung");
+    let knoten22 = new Node("Neuer Graph"); // 12 -> 22
 
-        // Richtig platzieren
-        hauptgraph_1.knoten_h.el.style.top = "50px";
-        hauptgraph_1.knoten_h.el.style.left = "400px";
+    knoten21.el.style.top = "400px";
+    knoten21.el.style.left = "0px";
 
-        knoten2.el.style.top = "200px";
-        knoten2.el.style.left = "400px";
+    knoten22.el.style.top = "400px";
+    knoten22.el.style.left = "200px";
 
-        knoten12.el.style.top = "400px";
-        knoten12.el.style.left = "400px";
+    beispielgraph_2.knoten_h.el.style.top = "300px";
+    beispielgraph_2.knoten_h.el.style.left = "100px";
+    
+    beispielgraph_2.addKnoten(knoten21.id);
+    beispielgraph_2.addKnoten(knoten22.id);
+    
+    // Verbindungen hinzufügen
+    beispielgraph_2.addConnection(beispielgraph_2.knoten_h.id, knoten21.id, 1);
+    beispielgraph_2.addConnection(beispielgraph_2.knoten_h.id, knoten22.id, 1);
+    beispielgraph_2.addConnection(knoten21.id, knoten22.id, 2);
 
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten2.id, 1);
-        hauptgraph_1.addConnection(hauptgraph_1.knoten_h.id, knoten12.id, 1);
-        hauptgraph_1.addConnection(knoten2.id, knoten12.id, 2);
-    }
-    else{
-        graph = new Graph();
-    }
+    // Verbindungen zeichnen
+    zeichneVerbindung();
 });
 
 document.getElementById("verbindung").addEventListener("click", (event) => {

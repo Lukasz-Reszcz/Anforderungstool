@@ -13,6 +13,9 @@ export default class Node {
     static verbindenVon = null;
     static verbindungAktiv = false;
 
+    // Map zum kopieren
+    static mapKopie = new Map();
+
 	constructor(info){
         // ID
         nodeMaxID += 1;
@@ -60,16 +63,12 @@ export default class Node {
         let knoten_ergebnis = new Node(knoten.info);
         knoten_ergebnis.wurzelknoten = knoten.wurzelknoten;
 
+        // Position kopieren
+        knoten_ergebnis.el.style.top = knoten.el.style.top;
+        knoten_ergebnis.el.style.left = knoten.el.style.left;
+        
+
         return knoten_ergebnis;
-    }
-    
-    append(direction, info){
-    	if(direction == "left"){
-        	this.left = new Node(info);
-        }
-        else if(direction == "right"){
-        	this.right = new Node(info);
-        }
     }
 
     set_graph_id(gid){
@@ -85,7 +84,8 @@ export default class Node {
         this.anforderungsquelle = aquelle;
     }
 
-
+    // Noch nötig?
+    /*
     search(text){
         // Debug
         // console.log("Text: " + text + " Info: " + this.info);
@@ -108,6 +108,7 @@ export default class Node {
         // Der Text wurde nicht gefunden
         return -1;
     }
+    */
 
     make_knoten(){
         // Den Knoten auf einer Stelle setzen (oben links)
@@ -214,6 +215,13 @@ export default class Node {
             }
 
             this.el.style.backgroundColor = "#00e6e6";
+            // alle Kopien markieren
+            for(let knotenKop of Node.mapKopie){
+                if(knotenKop[1] != Node.aktiverKnoten.id)   continue;
+
+                Node.getByID(knotenKop[0]).el.style.backgroundColor = "#34aab7"
+            }
+
 
             // Für verbinden mit
             if(Node.verbindungAktiv){
