@@ -1,6 +1,6 @@
-import { zeichneVerbindung } from "./graph.js";
-import Graph from "./graph_class.js";
-import Node from "./node_class.js";
+import { zeichneVerbindung } from "../graph.js";
+import Graph from "../graph_class.js";
+import Node from "../node_class.js";
 
 document.getElementById("knoteninfo").addEventListener('click', (event) => { 
     // document.getElementById("knoteninfo").style.backgroundColor = "rgb(144, 238, 144)";

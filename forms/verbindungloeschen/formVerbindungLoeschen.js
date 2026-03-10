@@ -1,5 +1,5 @@
-import Graph from "../graph_class.js";
-import Node from "../node_class.js";
+import Graph from "../../graph_class.js";
+import Node from "../../node_class.js";
 
 let mapBtnVerbindung = new Map();
 

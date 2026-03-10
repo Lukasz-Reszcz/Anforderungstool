@@ -1,5 +1,5 @@
 import Node from "./node_class.js"
-import {getVerbindungsarten} from "./verbindungsartform/verbindungsartform.js"
+import {getVerbindungsarten} from "./forms/verbindungsartform/verbindungsartform.js"
 
 export default class Graph {
     static register = new Map();

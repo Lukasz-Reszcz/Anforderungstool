@@ -1,9 +1,9 @@
 import Node from "./node_class.js";
-import "./knotenMenue.js";
+import "./menueOptionen/knotenMenue.js";
 import Graph from "./graph_class.js";
-import "./verbindungsartform/verbindungsartform.js";
-import "./graphenform/graphenform.js";
-import "./forms/formVerbindungLoeschen.js";
+import "./forms/verbindungsartform/verbindungsartform.js";
+import "./forms/graphenform/graphenform.js";
+import "./forms/verbindungloeschen/formVerbindungLoeschen.js";
 
 // globale Variablen
 window.nodeMaxID = 0;

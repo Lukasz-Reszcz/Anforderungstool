@@ -1,5 +1,5 @@
-import Graph from "../graph_class.js";
-import Node from "../node_class.js";
+import Graph from "../../graph_class.js";
+import Node from "../../node_class.js";
 
 document.getElementById("graphHochladen").addEventListener("click", () => {
     document.getElementById("graphenform").style.visibility = "visible";
