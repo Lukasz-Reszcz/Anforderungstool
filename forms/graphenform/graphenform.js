@@ -14,9 +14,6 @@ document.getElementById("graphenformschliessen").addEventListener("click", () =>
 })
 
 document.getElementById("btngraphenSpeichern").addEventListener("click", () => {
-    // Graphen bestimmen
-    let graph = Graph.getByID(1);
-
     class Knoten_json {
         constructor(){
             this.id = 0;
@@ -24,6 +21,7 @@ document.getElementById("btngraphenSpeichern").addEventListener("click", () => {
             this.pos_y = 0;
             this.info = "";
             this.wurzelknoten = 0;
+            this.stand = 1;
         }
     }
 
@@ -51,6 +49,9 @@ document.getElementById("btngraphenSpeichern").addEventListener("click", () => {
             "knoten":[],
             "graphen":[]
         }
+
+        
+
     for(const i of Node.register.keys()){
         // Iteration -- 
         let knoten = Node.getByID(i);
@@ -58,18 +59,35 @@ document.getElementById("btngraphenSpeichern").addEventListener("click", () => {
         // Wenn gelöscht, dann überspringen
         if(knoten.el.style.visibility == "hidden")  continue;
 
+        let knoten_json = {
+            id: 0,
+            pos_x: 0,
+            pos_y: 0,
+            info: "",
+            wurzelknoten: 0,
+            stand: 1
+        }
+        
+        
+        
+        
+        
+        // = new Knoten_json();
 
-
-        let knoten_json = new Knoten_json();
 
         knoten_json.id = knoten.id;
         knoten_json.pos_x = knoten.el.style.left;
         knoten_json.pos_y = knoten.el.style.top;
         knoten_json.info = knoten.info;
         knoten_json.wurzelknoten = knoten.wurzelknoten;
+        knoten_json.stand = knoten.stand;
 
         data_speichern.knoten.push(knoten_json);
     }
+
+    // Debug
+    // console.log(data_speichern.knoten);
+    // return;
   
     for(const i of Graph.register.keys()){
         let graph = Graph.getByID(i);

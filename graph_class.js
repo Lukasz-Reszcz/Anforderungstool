@@ -194,11 +194,20 @@ export default class Graph {
                     const knoteny = Node.getByID(this.knoten[j]);
 
                     ctx.beginPath();
+
                     // Die Paragraphenhöhe anpassen
-                    ctx.moveTo(parseInt(knotenx.el.style.left) - verschiebung, parseInt(knotenx.el.style.top) - paragraphenhoehe);
-                    ctx.lineTo(parseInt(knoteny.el.style.left) - verschiebung, parseInt(knoteny.el.style.top) - paragraphenhoehe);
+                    const pos_x1 = parseInt(knotenx.el.style.left) - verschiebung;
+                    const pos_y1 = parseInt(knotenx.el.style.top) - paragraphenhoehe;
+                    const pos_x2 = parseInt(knoteny.el.style.left) - verschiebung;
+                    const pos_y2 = parseInt(knoteny.el.style.top) - paragraphenhoehe;
+
+                    ctx.moveTo(pos_x1, pos_y1);
+                    ctx.lineTo(pos_x2, pos_y2);
                     
                     ctx.stroke();
+
+                    ctx.fillText(obj.verbindungsarten[this.kanten[i][j]-1].bezeichnung, 
+                        (pos_x1+pos_x2)/2, (pos_y1+pos_y2)/2);
                 }
             }
         }

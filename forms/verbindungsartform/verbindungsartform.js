@@ -1,8 +1,8 @@
 let verbindungsarten_text = `{
         "verbindungsarten":[
-            {"typ":"hierarchisch", "farbe":"blue"},
-            {"typ":"sequenz", "farbe":"lime"},
-            {"typ":"konkurrenz", "farbe":"red"}
+            {"typ":"hierarchisch", "farbe":"blue", "bezeichnung":""},
+            {"typ":"sequenz", "farbe":"lime", "bezeichnung":">>"},
+            {"typ":"konkurrenz", "farbe":"red", "bezeichnung":"[]"}
         ]     
     }`;
 
@@ -25,15 +25,16 @@ document.getElementById("btnVerbindungsartHinzufuegen").addEventListener("click"
     const typ = document.getElementById("einstellungstext").value;
     const farbe = document.getElementById("einstellungsfarbe").value;
     const optionnummer = verbindungsarten.verbindungsarten.length+1;
+    const bezeichnung = document.getElementById("einstellungsbezeichnung").value;
     
-    verbindungsarten.verbindungsarten.push({typ, farbe, optionnummer});
+    verbindungsarten.verbindungsarten.push({typ, farbe, bezeichnung, optionnummer});
 
     console.log(verbindungsarten)
 
     window.verbindungsarten = verbindungsarten;
 
     let parOption = document.createElement("p");
-    parOption.textContent = typ;
+    parOption.textContent = `${typ} (${bezeichnung})`;
     parOption.dataset.value = optionnummer;
 
     document.getElementById("verbindungsarten").appendChild(parOption);
