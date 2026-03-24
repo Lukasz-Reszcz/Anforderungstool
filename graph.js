@@ -4,6 +4,7 @@ import Graph from "./graph_class.js";
 import "./forms/verbindungsartform/verbindungsartform.js";
 import "./forms/graphenform/graphenform.js";
 import "./forms/verbindungloeschen/formVerbindungLoeschen.js";
+import "./forms/graphenVerbinden/graphenVerbinden.js";
 
 // globale Variablen
 window.nodeMaxID = 0;
@@ -164,130 +165,6 @@ function graphenVerbinden(){
     */
 }
 
-function findeGemeinsamenTeilgraphen(){
-    const graph1 = hauptgraph;
-    const graph2 = Graph.getByID(2);
-    let gemeinsameKnoten = [];
-
-    console.log(graph2);
-
-    // Gemeinsame Knoten finden
-    for(let i=0; i < graph1.knoten.length; i++){
-        for(let j=0; j < graph2.knoten.length; j++){
-            const knoten1 = Node.getByID(graph1.knoten[i]);
-            const knoten2 = Node.getByID(graph2.knoten[j]);
-
-            if(knoten1.info === knoten2.info){
-                gemeinsameKnoten.push([knoten1, knoten2]);
-            }
-        }
-    }
-
-    // const knotentt = ergebnis[0][0];
-    // knotentt.el.style.backgroundColor = "red";
-    let teilgraph = new Graph();
-    //teilgraph.loescheKnoten(teilgraph.knoten_h);
-    let graphenMap = new Map();
-
-    for(let i=0; i<gemeinsameKnoten.length; i++){
-        const knoten = gemeinsameKnoten[i][0].clone();
-        knoten.el.style.backgroundColor = "yellow";
-        teilgraph.addKnoten(knoten.id);
-        graphenMap.set(gemeinsameKnoten[i][0].id, knoten.id);
-    }
-
-    for(let i=0; i<gemeinsameKnoten.length; i++){
-        for(let j=i+1; j<gemeinsameKnoten.length; j++){
-
-            console.log(i, j);
-            console.log(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id));
-            console.log(graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id));
-            
-            if(graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id) === 
-               graph2.getVerbindung(gemeinsameKnoten[i][1].id, gemeinsameKnoten[j][1].id)){             
-
-                teilgraph.addConnection(graphenMap.get(gemeinsameKnoten[i][0].id), 
-                    graphenMap.get(gemeinsameKnoten[j][0].id), 
-                    graph1.getVerbindung(gemeinsameKnoten[i][0].id, gemeinsameKnoten[j][0].id))
-            }
-        }
-    }
-
-    teilgraph.loescheKnoten(teilgraph.knoten_h.id);
-
-    // Den Knoten finden, der nur hierarchische Verbindungen hat
-    let hauptknotenGefunden = false;
-    let hauptknotenID = 0;
-    for(let i=0; i<teilgraph.knoten.length; i++){
-        for(let j=0; j<teilgraph.knoten.length; j++){
-            if(teilgraph.kanten[i][j] > 1){
-                break;
-            }
-            if(j === teilgraph.knoten.length-1){
-                hauptknotenGefunden = true;
-                hauptknotenID = teilgraph.knoten[i];
-            }
-        }
-        if(hauptknotenGefunden){
-            break;
-        }
-    }
-
-    // Prüfen, ob die Verbindungen zu dem Knoten rein- oder rausgehen
-    // Als eine Funktion schreiben
-    let verbindungsart1 = null;
-    let verbindungsart2 = null
-    for(const knoten1 of graph1.knoten){
-        if(Node.getByID(hauptknotenID).info === Node.getByID(knoten1).info){
-            hauptknotenID = knoten1;
-        }
-    }
-
-    const knotenPosition = graph1.knoten.indexOf(hauptknotenID);
-    for(let i=0; i<graph1.knoten.lenght; i++){
-        if(graph1.kanten[i][knotenPosition] >= 2){
-            verbindungsart1 = "rein";
-            break;
-        }
-    }
-
-    for(let i=0; i<graph1.knoten.lenght; i++){
-        if(graph1.kanten[knotenPosition][i] >= 2){
-            verbindungsart1 = "raus";
-            break;
-        }
-    }
-
-    for(const knoten2 of graph2.knoten){
-        if(Node.getByID(hauptknotenID).info === Node.getByID(knoten2).info){
-            hauptknotenID = knoten2;
-        }
-    }
-
-    const knotenPosition1 = graph2.knoten.indexOf(hauptknotenID);
-
-    for(let i=0; i<graph2.knoten.lenght; i++){
-        if(graph2.kanten[i][knotenPosition1] >= 2){
-            verbindungsart2 = "rein";
-            break;
-        }
-    }
-
-    for(let i=0; i<graph2.knoten.lenght; i++){
-        if(graph2.kanten[knotenPosition1][i] >= 2){
-            verbindungsart2 = "raus";
-            break;
-        }
-    }
-
-    console.log(verbindungsart1, verbindungsart2);
-    
-    
-
-
-
-    teilgraph.zeichneVerbindungen();
-}
 
 export function zeichneVerbindung(){
     leereVerbindungen();
@@ -342,7 +219,11 @@ document.getElementById("neuerGraph").addEventListener('click', (event) => {
     graph.knoten_h.set_info(aufgabenname);
 })
 document.getElementById("graphenVerbinden").addEventListener('click', (event) => {
-    graphenVerbinden();
+    document.getElementById("formGraphenVerbinden").style.visibility = "visible";
+
+
+
+    // graphenVerbinden();
 })
 document.getElementById("neuerKnoten").addEventListener('click', (event) => {
     let knoten = new Node("Test");
@@ -391,9 +272,9 @@ document.getElementById("zeichneVerbindung").addEventListener('click', (event) =
 
 //===============================================================
 document.getElementById("TeilgraphenFinden").addEventListener('click', () => {
-    let res = findeGemeinsamenTeilgraphen();
+    // let res = findeGemeinsamenTeilgraphen();
 
-    console.log(res);
+    // console.log(res);
 })
 
 document.getElementById("knotenAutomatisieren").addEventListener('click', () => {
