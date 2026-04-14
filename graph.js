@@ -182,10 +182,10 @@ function leereVerbindungen(){
     ctx.clearRect(0,0, canvas.width, canvas.height);
 }
 
-function findeUnteknoten(graphID, knotenID){
+function findeUnteknoten(knotenID){
     let unterknoten = [];
 
-    const graph = Graph.getByID(graphID);
+    const graph = Node.getByID(knotenID).graph_id; 
     const indxVon = graph.knoten.indexOf(knotenID);
 
     for(let i=0; i<graph.knoten.length; i++){
@@ -194,10 +194,12 @@ function findeUnteknoten(graphID, knotenID){
         }
     }
 
+    
     for(const knoten of unterknoten){
-        return unterknoten.concat(findeUnteknoten(graphID, knoten));
+        // return
+        unterknoten = unterknoten.concat(findeUnteknoten(knoten));
     }
-
+    
     return unterknoten;
 }
 
@@ -302,7 +304,11 @@ document.getElementById("knotenAutomatisieren").addEventListener('click', () => 
     const graphid = Node.aktiverKnoten.graph_id;
     const knotenid = Node.aktiverKnoten.id;
 
-    let uk = findeUnteknoten(graphid, knotenid);
+    let uk = findeUnteknoten(knotenid);
+
+    // Debug
+    alert("Unterknoten: " + uk);
+
     loescheUnterknoten(graphid, uk);
 })
 
@@ -368,10 +374,12 @@ function graphenVerschieben(graphID, stand){
 //----
 document.getElementById("knotengleichungErstellen").addEventListener("click", () => {
     const aktiverKnoten = Node.aktiverKnoten;
-    const graph = Graph.getByID(aktiverKnoten.graph_id);
+    
 
     // Wenn der Knoten keinem Graphen gehört, dann beenden
     if(aktiverKnoten.graph_id == 0) return;
+
+    const graph = Graph.getByID(aktiverKnoten.graph_id);
 
     // Unterknoten bestimmen
     let unterknoten = [];
@@ -379,9 +387,11 @@ document.getElementById("knotengleichungErstellen").addEventListener("click", ()
 
     for(let i=0; i<graph.knoten.length; i++){
         if(graph.kanten[indx][i] == 1){
-            unterknoten.push(i);
+            unterknoten.push(graph.knoten[i]);
         }
     }
+
+
 
     // verbindung
     let verbindung = 0;
@@ -396,11 +406,42 @@ document.getElementById("knotengleichungErstellen").addEventListener("click", ()
         4: "|||"
     }
 
-    let gleichung = Node.getByID(graph.knoten[unterknoten[0]]).info + " " + mapVerbindung[verbindung] + " " + 
-        Node.getByID(graph.knoten[unterknoten[1]]).info;
+    let gleichung = gleichungBilden(unterknoten[0]);
+    alert("Gleichung: " + gleichung);
+    
+    // Node.getByID(graph.knoten[unterknoten[0]]).info + " " + mapVerbindung[verbindung] + " " + 
+    // Node.getByID(graph.knoten[unterknoten[1]]).info;
 
     aktiverKnoten.parGleichung.textContent = gleichung;
 })
+
+function gleichungBilden(knotenID){
+    let graphID = Node.getByID(knotenID).graph_id;
+    let graph = Graph.getByID(graphID);
+    let gleichung = Node.getByID(knotenID).info;
+
+    let existiertVerbindungVon = false;
+    let idxVon = graph.knoten.indexOf(knotenID);
+
+    const mapVerbindung = {
+        2: ">>",
+        3: "[]",
+        4: "|||"
+    }
+
+    for(let i=0; i<graph.size; i++){
+        if(graph.kanten[idxVon][i] > 1){
+            existiertVerbindungVon = true;
+
+            gleichung = gleichung + " " + mapVerbindung[graph.kanten[idxVon][i]] + 
+                " " + gleichungBilden(graph.knoten[i]);
+
+            break;
+        }
+    }
+     
+    return gleichung;
+}
 
 document.getElementById("ueberschriften").addEventListener("dblclick", (event) => {
 
