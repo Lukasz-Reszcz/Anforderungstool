@@ -18,15 +18,17 @@ document.getElementById("formGraphenVerbinden_GraphenVerbinden").addEventListene
 
     // Teilgraphen finden
     // let gemeinsamerGraph = findTeilgraphen();
-    // findeGemeinsamenTeilgraphen(graphID1, graphID2);
+    
+    let graphOption = document.getElementById("zusammensetzungsart").value;
+    if(graphOption == "gemeinsameKnoten")
+        findeGemeinsamenTeilgraphen(graphID1, graphID2);
 
     // Sequenzverbinden
-    sequenzVerbinden(graphID1, graphID2);
+    if(graphOption == "optionalSequenz")
+        sequenzVerbinden(graphID1, graphID2);
 
-
-
-
-
+    // bloße Zusammensetzung
+    // if(graphOption == "blosseZusammensetzung")
     
 });
 
@@ -86,8 +88,6 @@ function sequenzVerbinden(graphID1, graphID2){
     graphSeq.addConnection(graphSeq.knoten_h.id, knotenEnde.id, 1);
 
     if(optionaleKnoten[0].length == 1){
-        console.log(optionaleKnoten);
-
         let optKnoten = Node.clone(optionaleKnoten[0][0].id);
 
         graphSeq.addKnoten(optKnoten.id);
@@ -97,6 +97,31 @@ function sequenzVerbinden(graphID1, graphID2){
         graphSeq.addConnection(optKnoten.id, knotenEnde.id, 2);
         
         setOptionalenKnoten(optKnoten);
+    }
+    if(optionaleKnoten[0].length > 1){
+        let optKnoten = new Node("Optional");
+
+        graphSeq.addKnoten(optKnoten.id);
+
+        graphSeq.addConnection(graphSeq.knoten_h.id, optKnoten.id, 1);
+        graphSeq.addConnection(knotenAnfang.id, optKnoten.id, 2);
+        graphSeq.addConnection(optKnoten.id, knotenEnde.id, 2);
+        
+        setOptionalenKnoten(optKnoten);
+
+        // Optionale Aufgaben unter der abstrakten Aufgabe
+        let unterknotenIDs = [];
+        for(let i=0; i<optionaleKnoten[0].length; i++){
+            let unterknoten = Node.clone(optionaleKnoten[0][i].id);
+            unterknotenIDs.push(unterknoten.id);
+
+            graphSeq.addKnoten(unterknoten.id);
+            graphSeq.addConnection(optKnoten.id, unterknoten.id, 1);
+        }
+
+        for(let i=1; i<unterknotenIDs.length; i++){
+            graphSeq.addConnection(unterknotenIDs[i-1], unterknotenIDs[i], 2);
+        }
     }
 }
 

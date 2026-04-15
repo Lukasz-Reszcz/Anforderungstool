@@ -124,8 +124,8 @@ export default class Node {
         const graphContainer = document.getElementById("hauptcontainer");
         
         this.el.style.position = "absolute";
-        this.el.style.left = "50px";
-        this.el.style.top = "50px"; 
+        this.el.style.left = "150px";
+        this.el.style.top = "150px"; 
 
         // Textfeld
         this.par = document.createElement("p");
