@@ -28,7 +28,8 @@ document.getElementById("formGraphenVerbinden_GraphenVerbinden").addEventListene
         sequenzVerbinden(graphID1, graphID2);
 
     // bloße Zusammensetzung
-    // if(graphOption == "blosseZusammensetzung")
+    if(graphOption == "blosseZusammensetzung")
+        graphenZusammenstellen(graphID1, graphID2);
     
 });
 
@@ -383,4 +384,27 @@ function findeGemeinsamenTeilgraphen(graphID1, graphID2){
 
 
     teilgraph.zeichneVerbindungen();
+}
+
+function graphenZusammenstellen(graphID1, graphID2){
+    const graph1 = Graph.getByID(graphID1);
+    const graph2 = Graph.getByID(graphID2);
+
+    // Die 2 WKnoten entwurzeln
+
+    let unterziel1 = Graph.getByID(graphID1).clone();
+    let unterziel2 = Graph.getByID(graphID2).clone();
+
+    let gemeinsamGraph = new Graph(graph1.knoten_h.info);
+    
+    for(const knot of unterziel1.knoten.concat(unterziel2.knoten)){
+        Node.getByID(knot).graph_id = gemeinsamGraph.id;
+        gemeinsamGraph.addKnoten(knot);   
+    }
+
+    gemeinsamGraph.addConnection(gemeinsamGraph.knoten_h.id, unterziel1.knoten_h.id, 1);
+    gemeinsamGraph.addConnection(gemeinsamGraph.knoten_h.id, unterziel2.knoten_h.id, 1);
+    gemeinsamGraph.addConnection(unterziel1.knoten_h.id, unterziel2.knoten_h.id, 3);
+
+    // Auch eltern?
 }
