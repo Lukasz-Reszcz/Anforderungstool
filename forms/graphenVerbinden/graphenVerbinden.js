@@ -149,13 +149,25 @@ function findeGemeinsamenTeilgraphen(graphID1, graphID2){
     let teilgraph = new Graph();
     let graphenMap = new Map();
 
-    teilgraph.loescheKnoten(teilgraph.knoten_h.id);
+    // () teilgraph.loescheKnoten(teilgraph.knoten_h.id);
 
     for(let i=0; i<gemeinsameKnoten.length; i++){
         const knoten = Node.clone(gemeinsameKnoten[i][0].id);
         knoten.el.style.backgroundColor = "yellow";
-        teilgraph.addKnoten(knoten.id);
-        graphenMap.set(gemeinsameKnoten[i][0].id, knoten.id);
+
+        if(knoten.wurzelknoten){
+            teilgraph.knoten_h.set_info(knoten.info);
+            teilgraph.knoten_h.el.style.top = knoten.el.style.top;
+            teilgraph.knoten_h.el.style.left = knoten.el.style.left;
+
+            graphenMap.set(gemeinsameKnoten[i][0].id, teilgraph.knoten_h.id);
+
+            knoten.loesche_Knoten();
+        }
+        else{
+            teilgraph.addKnoten(knoten.id);
+            graphenMap.set(gemeinsameKnoten[i][0].id, knoten.id);
+        }
     }
 
     // Gemeinsame Kanten finden
@@ -272,7 +284,6 @@ function findeGemeinsamenTeilgraphen(graphID1, graphID2){
         mapFantasma.set(knoten_aequivalent_alt_ID, knoten_aequivalentID);
 
         teilgraph.addKnoten(knoten_aequivalentID);
-        teilgraph.addConnection
 
         // Kanten hinzufügen
         // verb1[][] 
@@ -296,6 +307,9 @@ function findeGemeinsamenTeilgraphen(graphID1, graphID2){
         teilgraph.addConnection(knoten_aequivalentID, knot1.id, 1);
         teilgraph.addConnection(knoten_aequivalentID, knot2.id, 1);
         teilgraph.addConnection(knot1.id, knot2.id, 3);
+
+        // Debug
+        console.log(teilgraph);
         
     }
     else{

@@ -98,7 +98,13 @@ export default class Graph {
                         knotenNachKopieID = knotenKopieID;
                 }
 
-                graphClone.addConnection(knotenVonKopieID, knotenNachKopieID, this.kanten[i][j]);
+                // Debug
+                console.log("knotenVonKopieID: " + knotenVonKopieID +
+                            "\nknotenNachKopieID: " + knotenNachKopieID + 
+                            "\nthis.kanten[i][j]: " + this.kanten[i][j]);
+
+                if(knotenVonKopieID != undefined && knotenNachKopieID != undefined)
+                    graphClone.addConnection(knotenVonKopieID, knotenNachKopieID, this.kanten[i][j]);
             }
         }
 

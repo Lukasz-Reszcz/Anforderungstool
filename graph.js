@@ -58,8 +58,17 @@ function setGraphenflaechen(){
 
 setGraphenflaechen();
 
-// Den Graphen erstellen (die Verbindungen)
+const observator = new ResizeObserver(fenster => {
+    console.log("Neue Größe: " + fenster[0].contentRect.width + " x " + fenster[0].contentRect.height);
 
+    setGraphenflaechen();
+    zeichneVerbindung();
+    }
+);
+
+observator.observe(document.getElementById("hauptcontainer"));
+
+// Den Graphen erstellen (die Verbindungen)
 let graphenVerbindenZustand = false;
 let modellEtappe = 1;
 
@@ -195,7 +204,6 @@ function findeUnteknoten(knotenID){
         }
     }
 
-    
     for(const knoten of unterknoten){
         // return
         unterknoten = unterknoten.concat(findeUnteknoten(knoten));
